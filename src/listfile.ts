@@ -37,7 +37,6 @@ export class ListFile {
         // Create map
         const hierarchyMap = new HierarchyEntry();
         // Parse all lines
-        let lineNumber = 0;
         for(const line of this.lines) {
             // Parsing: A list file line looks like this: 
             // "  76  2621                  EXPORT text.ula.print_string "
@@ -61,10 +60,6 @@ export class ListFile {
                     // Next
                     map = nextMap;
                 }
-                // Add line number to leaf (subroutine)
-                map.lineNumber = lineNumber;
-                // Next
-                lineNumber ++;
             }
         }
 
@@ -80,9 +75,15 @@ export class ListFile {
      */
     public addLineNumbers(exports: HierarchyEntry) {
         // Parse all lines
-        let lineNumber = 0;
+        let lineNumber = -1;
         let module = '';
         for(const line of this.lines) {
+            lineNumber ++;
+
+            // Skip file openend/closed (include) files.
+            if(line.startsWith('#'))
+                continue;
+
             // sjasmplus allows for fix parsing so we simply drop all characters in front of the label.
             // "   4+ 0B55              ; The main game loop."
             //  0123456789012345678901234
@@ -96,7 +97,7 @@ export class ListFile {
                 // Remove all spaces from the label.
                 const relModule = moduleMatch[1];  // e.g. "text"
                 // Add relative module
-                module += '.' + relModule;
+                module = (module.length == 0) ? relModule : module + '.' + relModule;
                 // Next line 
                 continue;
             }
@@ -104,10 +105,10 @@ export class ListFile {
             // Parsing: We are looking for ENDMODULE.
             // A list file line with a label looks like this: 
             // " 335+ 0B55                  ENDMODULE "
-            const endmoduleMatch = /^\s+endmodule\W/i.exec(remaningLine);
+            const endmoduleMatch = /^\s+endmodule\s*$/i.exec(remaningLine);
             if(endmoduleMatch) {
                 // Remove last relative module
-                const k = module.lastIndexOf('.');
+                const k = module.lastIndexOf('.');  // Could be -1, that's OK.
                 module = module.substr(0,k);
                 // Next line 
                 continue;
@@ -132,8 +133,6 @@ export class ListFile {
                     entry.lineNumber = lineNumber;
                 }
             }
-            // Next
-            lineNumber ++;
         }
     }
 

@@ -1,0 +1,16 @@
+   0  2621               MODULE a
+   1  2621              ; D:a.b1
+   2  2621              b1:
+   3  2621               ; D:a.b2
+   4  2621              b2
+   5  2621                  ; D:a.b1.c1
+   6  2621              b1.c1:
+   7  2621              ; D:a.b3.c1
+   8  2621              b3.c1
+   9  2621               ENDMODULE
+  10  2621              b:
+  11  2621                  EXPORT a.b1
+  12  2621                  EXPORT a.b2
+  13  2621                  EXPORT a.b1.c1
+  14  2621                  EXPORT a.b3.c1
+  14  2621                  EXPORT b
