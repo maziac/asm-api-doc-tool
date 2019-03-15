@@ -22,7 +22,8 @@ class Startup {
     public static main(): number {
   
         // Get arguments
-        const args = process.argv.splice(2);
+        const 
+        args = process.argv.splice(2);
 
         // Check for help
         if(args.length == 0) {
@@ -32,16 +33,18 @@ class Startup {
 
         // Get filename 
         let filename = args[0];
-        this.listfile = new ListFile(filename);
+        const listfile = new ListFile(filename);
 
         // Loop all exports
-        const exports = this.listfile.getExports();
+        const exports = listfile.getExports();
 
-        // Get all (export) labels
-        this.listfile.getLabels(exports);
+        // Get the line numbers for all (export) labels
+        listfile.addLineNumbers(exports);
 
+        // Get the text descriptions.
+        exports.getDescriptions(listfile.lines);
         // Write the html output
-        const html = new Html(hierarchy);
+        const html = new Html(exports);
 
         return 0;
     }

@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { HierarchyEntry } from 'hierarchyentry.ts';
+import { HierarchyEntry } from './hierarchyentry';
 
 
 
@@ -7,8 +7,9 @@ import { HierarchyEntry } from 'hierarchyentry.ts';
 /**
  * Class to represent the list file.
  */
-class ListFile {
-    protected lines: Array<string>;
+export class ListFile {
+    /// All the lines of text read from the file.
+    public lines: Array<string>;
 
     /**
      * Reads the list file.
@@ -78,7 +79,7 @@ class ListFile {
      * map.
      * @return A list of strings that contains all labels.
      */
-    public getLabels(exports: HierarchyEntry) {
+    public addLineNumbers(exports: HierarchyEntry) {
         // Parse all lines
         let lineNumber = 0;
         let module = '';
@@ -122,12 +123,16 @@ class ListFile {
                 const label = module + '.' + relLabel;
                 // Search for label in exports
                 const entry = exports.getEntry(label);
-                // Add line number
-                entry.lineNumber = lineNumber;
+                // Check if label should be exported
+                if(entry) {
+                    // Add line number
+                    entry.lineNumber = lineNumber;
+                }
                 // Next
                 lineNumber ++;
            }
         }
     }
+
 }
 
