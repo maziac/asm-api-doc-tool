@@ -1,4 +1,5 @@
-
+import { ListFile } from './listfile';
+import { Html } from './html';
 
 
 
@@ -37,10 +38,10 @@ class Startup {
         const exports = this.listfile.getExports();
 
         // Get all (export) labels
-        const hierarchy = this.listfile.getLabels(exports);
+        this.listfile.getLabels(exports);
 
         // Write the html output
-        const html = new html(hierarchy);
+        const html = new Html(hierarchy);
 
         return 0;
     }

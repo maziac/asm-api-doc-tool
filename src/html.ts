@@ -1,16 +1,16 @@
+import { writeFileSync } from 'fs';
+import { HierarchyEntry } from './hierarchyentry';
 
 
 /**
  * Creates the html output.
  */
-class Html {
-    protected lines: Array<string>;
-
+export class Html {
     /**
-     * Reads the list file.
-     * @param filename 
+     * Receives the hierarchy of all labels.
+     * @param hierarchy
      */
-    constructor(hierarchy) {
+    constructor(hierarchy: HierarchyEntry) {
 		
     }
 

@@ -1,40 +1,7 @@
 import { readFileSync } from 'fs';
+import { HierarchyEntry } from 'hierarchyentry.ts';
 
 
-
-/**
- * The elements for the hierarchy map.
- * E.g. text.layer2.print_string, text.ula.print_string, text.layer2.print_char,  will become:
- * text - layer2 - print_string
- *     +- ula - print_string
- *           +- print_char
- */
-class HierarchyEntry {
-    /// The line number of the label. Could be -1 if it does not exist.
-    public lineNumber: number;
-
-    /// The elements included in an entry. E.g. we are at MODULE level and the
-    /// elements are the subroutines. Could be an empty map.
-    public elements: Map<string,HierarchyEntry>;
-
-    /**
-     * Initializes the entry.
-     */
-    constructor() {
-        this.lineNumber = -1;   // undefined
-        this.elements = new Map<string,HierarchyEntry>();
-    }
-
-
-    /**
-     * Searches the hierarchy from top entry to bottom for a given label.
-     * @param label E.g. 'text.ula.print_string"
-     * @return The corresponding hierarchy element or undefined if not found.
-     */
-    getEntry(label: string): HierarchyEntry {
-
-    }
-}
 
 
 /**
