@@ -46,7 +46,7 @@ export class HierarchyEntry {
         // Get the rest
         const remaining = label.substr(k+1);
         // Get the part iteratively
-        const entry = this.elements.get(label);
+        const entry = this.elements.get(first);
         if(!entry)
             return undefined;
         return entry.getEntry(remaining);

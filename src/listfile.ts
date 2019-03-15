@@ -16,8 +16,7 @@ export class ListFile {
      * @param filename 
      */
     constructor(filename: string) {
-        this.lines = readFileSync(filename).toString().split('\n');
-		
+        this.lines = readFileSync(filename).toString().split('\n');	
     }
 
 
@@ -85,7 +84,9 @@ export class ListFile {
         let module = '';
         for(const line of this.lines) {
             // sjasmplus allows for fix parsing so we simply drop all characters in front of the label.
-            const remaningLine = line.substr(34);
+            // "   4+ 0B55              ; The main game loop."
+            //  0123456789012345678901234
+            const remaningLine = line.substr(24);
 
             // Parsing: We are looking for MODULE.
             // A list file line with a label looks like this: 
@@ -115,12 +116,14 @@ export class ListFile {
             // Parsing: We are looking for labels.
             // A list file line with a label looks like this: 
             // "  76+ 0A8E              ula.print_char: "
-            const labelMatch = /^([\w.]+):?\s*(;.*)?$/i.exec(remaningLine);
+            const labelMatch = /^([\w\.]+):?\s*(;.*)?$/i.exec(remaningLine);
             if(labelMatch) {
                 // Remove all spaces from the label.
                 const relLabel = labelMatch[1];  // e.g. "ula.print.char"
                 // Add module
-                const label = module + '.' + relLabel;
+                let label = relLabel;
+                if(module.length > 0)
+                    label = module + '.' + label;
                 // Search for label in exports
                 const entry = exports.getEntry(label);
                 // Check if label should be exported
@@ -128,9 +131,9 @@ export class ListFile {
                     // Add line number
                     entry.lineNumber = lineNumber;
                 }
-                // Next
-                lineNumber ++;
-           }
+            }
+            // Next
+            lineNumber ++;
         }
     }
 

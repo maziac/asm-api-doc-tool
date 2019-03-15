@@ -15,11 +15,21 @@
     "typescript": "^3.3.3333"
   },
   "devDependencies": {
-    "assert": "^1.4.1"
+    "assert": "^1.4.1",
+    "nyc": "^13.3.0"
   },
   "scripts": {
-    "test": "mocha --ui tdd -r ts-node/register test/**/*.ts"
+    "test": "nyc --reporter=text mocha --ui tdd -r ts-node/register test/**/*.ts"
   },
   "author": "Thomas Busse",
-  "license": "MIT"
+  "license": "MIT",
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src/**/*.ts"
+    ],
+    "sourceMap": true
+  }
 }
