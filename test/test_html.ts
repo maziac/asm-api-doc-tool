@@ -2,8 +2,10 @@
 
 import * as assert from 'assert';
 import { Html } from '../src/html';
-import { ListFile } from '../src/listfile';
+//import { ListFile } from '../src/listfile';
 import { HierarchyEntry } from '../src/hierarchyentry';
+import * as path from 'path';
+const fs = require('fs-extra');
 
 
 suite('Html', () => {
@@ -50,105 +52,83 @@ suite('Html', () => {
     });
 
 
-    suite('addLineNumbers', () => {
+    suite('getContentsHtml', () => {
+ 
+        test('A few labels', (done) => {
+            const h = new HierarchyEntry()
+            const html = new Html(h) as any;
 
-        test('All exports found', (done) => {
-            const lf = new ListFile('test/data/lf_addlinenumbers.list')
-            assert.notEqual(lf.lines.length, 0, "File contains no lines.");
+            // Setup some hierarchy
+            h.lineNumber = 1;
+            const h11 = new HierarchyEntry();
+            const h12 = new HierarchyEntry();
+            h.elements.set("b", h11);
+            h.elements.set("c", h12);
+            const h121 = new HierarchyEntry();
+            h12.elements.set("d", h121);
+            const h111 = new HierarchyEntry();
+            h11.elements.set("a", h111);
+            // Descriptions
+            h111.description = 'descr111';
+            h12.description = 'descr12'
+            
+            // Execute
+            const r = html.getContentsHtml();
 
-            const e = lf.getExports();
-            lf.addLineNumbers(e);
+            // Check
+            const lines = r.split('\n');
+            assert.equal(lines[0], '<h1 id="b">b</h1>');
+            assert.equal(lines[2], '<h2 id="b.a">b.a</h2>');
+            assert.equal(lines[3], 'descr111');
 
-            const r1 = e.getEntry('a.b1') as any;
-            assert.equal( r1.lineNumber, 1);
-            const r2 = e.getEntry('a.b2') as any;
-            assert.equal( r2.lineNumber, 3);
-            const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal( r3.lineNumber, 5);
-            const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal( r4.lineNumber, 7);
-            const r5 = e.getEntry('b') as any;
-            assert.equal( r5.lineNumber, 9);
+            assert.equal(lines[5], '<h1 id="c">c</h1>');
+            assert.equal(lines[6], 'descr12');
+            assert.equal(lines[8], '<h2 id="c.d">c.d</h2>');
             
             done();
         });
-
-        test('Non existing export', (done) => {
-            const lf = new ListFile('test/data/lf_addlinenumbers2.list')
-            assert.notEqual(lf.lines.length, 0, "File contains no lines.");
-
-            const e = lf.getExports();
-            lf.addLineNumbers(e);
-
-            const r1 = e.getEntry('c') as any;
-            assert.equal( r1.lineNumber, -1);
-            
-            done();
-        });
-
-        test('Simple module', (done) => {
-            const lf = new ListFile('test/data/lf_addlinenumbers_module1.list')
-            assert.notEqual(lf.lines.length, 0, "File contains no lines.");
-
-            const e = lf.getExports();
-            lf.addLineNumbers(e);
-
-            const r1 = e.getEntry('a.b1') as any;
-            assert.equal( r1.lineNumber, 2);
-            const r2 = e.getEntry('a.b2') as any;
-            assert.equal( r2.lineNumber, 4);
-            const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal( r3.lineNumber, 6);
-            const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal( r4.lineNumber, 8);
-            const r5 = e.getEntry('b') as any;
-            assert.equal( r5.lineNumber, 10);
-            
-            done();
-        });
-
-        test('Multiple modules', (done) => {
-            const lf = new ListFile('test/data/lf_addlinenumbers_module2.list')
-            assert.notEqual(lf.lines.length, 0, "File contains no lines.");
-
-            const e = lf.getExports();
-            lf.addLineNumbers(e);
-
-            const r1 = e.getEntry('a.b1') as any;
-            assert.equal( r1.lineNumber, 2);
-            const r2 = e.getEntry('a.x.b2') as any;
-            assert.equal( r2.lineNumber, 5);
-            const r3 = e.getEntry('a.x.b1.c1') as any;
-            assert.equal( r3.lineNumber, 7);
-            const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal( r4.lineNumber,10);
-            const r5 = e.getEntry('y.b') as any;
-            assert.equal( r5.lineNumber, 13);
-            
-            done();
-        });
-
-        test('Skip #-lines', (done) => {
-            const lf = new ListFile('test/data/lf_addlinenumbers3.list')
-            assert.notEqual(lf.lines.length, 0, "File contains no lines.");
-
-            const e = lf.getExports();
-            lf.addLineNumbers(e);
-
-            const r1 = e.getEntry('a.b1') as any;
-            assert.equal( r1.lineNumber, 1);
-            const r2 = e.getEntry('a.b2') as any;
-            assert.equal( r2.lineNumber, 3);
-            const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal( r3.lineNumber, 7);
-            const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal( r4.lineNumber, 11);
-            const r5 = e.getEntry('b') as any;
-            assert.equal( r5.lineNumber, 13);
-            
-            done();
-        });
-
     });
+
+
+    suite('writeFiles', () => {
+        const dir = "test/tmp";
+ 
+        test('A few labels', (done) => {
+            const h = new HierarchyEntry()
+            const html = new Html(h) as any;
+
+            // Setup some hierarchy
+            h.lineNumber = 1;
+            const h11 = new HierarchyEntry();
+            const h12 = new HierarchyEntry();
+            h.elements.set("b", h11);
+            h.elements.set("c", h12);
+            const h121 = new HierarchyEntry();
+            h12.elements.set("d", h121);
+            const h111 = new HierarchyEntry();
+            h11.elements.set("a", h111);
+            // Descriptions
+            h111.description = 'descr111';
+            h12.description = 'descr12'
+
+            // Remove tmp dir
+            fs.removeSync(dir);
+    
+            // Execute
+            html.writeFiles(dir);
+
+            // Check that the 3 files exist (not the contents)
+            const pathMain = path.join(dir, 'index.html');
+            assert.ok(fs.exists(pathMain));
+            const pathToc = path.join(dir, 'toc.html');
+            assert.ok(fs.exists(pathToc));
+            const pathContents = path.join(dir, 'contents.html');
+            assert.ok(fs.exists(pathContents));
+            
+            done();
+        });
+    });
+
+
 
 });

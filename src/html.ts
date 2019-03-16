@@ -1,7 +1,7 @@
-import { writeFileSync } from 'fs';
 import { HierarchyEntry } from './hierarchyentry';
 import * as util from 'util';
-
+import * as path from 'path';
+const fs = require('fs-extra');
 
 /// The main html file.
 const htmlMain = 'index.html';
@@ -86,11 +86,11 @@ export class Html {
             if(entry.description) {
                 // Check if we need to add a vertical space
                 const count = label.split('.').length-1;    // Number of '.' in label
-                if(lastNumberOfDots != count) {
+                if(lastNumberOfDots < count) {
                     // Add a vertical space
-                    toc += '<br>\n'
-                    lastNumberOfDots = count;
+                    toc += '<br>\n';
                 }
+                lastNumberOfDots = count;
             }
             // Write link
             toc += '<a href="' + htmlContents + '#' + label + '">' + label + '</a><br>\n';
@@ -109,22 +109,22 @@ export class Html {
         let contents = '';
         let lastNumberOfDots = 0;
         this.hierarchy.iterate( (label, entry) => {
+            const count = label.split('.').length-1;    // Number of '.' in label
             // Check for description
             if(entry.description) {
                 // Check if we need to add a vertical space
-                const count = label.split('.').length-1;    // Number of '.' in label
-                if(lastNumberOfDots != count) {
+                if(lastNumberOfDots < count) {
                     // Add a vertical space
-                    contents += '<br>\n'
-                    lastNumberOfDots = count;
+                    contents += '<br>\n';
                 }
-                // Write title and anchor
-                const hDepth = count+1;
-                contents += '<h' + hDepth + ' id="' + label + '">' + label + '</h' + hDepth + '>\n';
-                // Write description
-                if (entry.description)
-                    contents += entry.description + '\n\n';
+                lastNumberOfDots = count;
             }
+            // Write title and anchor
+            const hDepth = count+1;
+            contents += '<h' + hDepth + ' id="' + label + '">' + label + '</h' + hDepth + '>\n';
+            // Write description
+            if (entry.description)
+                contents += entry.description + '\n\n';
         });
         
         return contents;
@@ -134,7 +134,8 @@ export class Html {
     /**
      * Writes the 3 html files to disk.
      */
-    public writeFiles() {
+    public writeFiles(dir: string) {
+        // Create contents for files.
 
         // TOC
         const formatToc = `
@@ -168,5 +169,18 @@ export class Html {
         const contents = this.getTocHtml();
         const fContents = util.format(formatContents, contents);
 
+        // Main
+        const main = this.getMainHtml();
+
+        // Create dir
+        fs.mkdirpSync(dir);
+
+        // Write files.
+        const pathMain = path.join(dir, htmlMain);
+        fs.writeFileSync(pathMain, main);
+        const pathToc = path.join(dir, htmlToc);
+        fs.writeFileSync(pathToc, fToc);
+        const pathContents = path.join(dir, htmlContents);
+        fs.writeFileSync(pathContents, fContents);
     }
 }

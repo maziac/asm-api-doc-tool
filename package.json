@@ -11,6 +11,7 @@
     "@types/mocha": "^5.2.6",
     "@types/node": "^11.11.3",
     "fs": "0.0.1-security",
+    "fs-extra": "^7.0.1",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.3333"
   },
