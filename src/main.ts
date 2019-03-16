@@ -42,8 +42,8 @@ class Startup {
         listfile.addLineNumbers(exports);
 
         // Get the text descriptions.
-        exports.getDescriptions(listfile.lines);
-        
+        exports.setDescriptions(listfile.lines);
+
         // Write the html output
         const html = new Html(exports);
 

@@ -59,13 +59,13 @@ export class HierarchyEntry {
      * I.e. the comment lines above the label are used.
      * @param lines All lines of the file.
      */
-    public getDescriptions(lines: Array<string>) {
+    public setDescriptions(lines: Array<string>) {
         // Check description for current line
         this.description = HierarchyEntry.getSingleDescription(this.lineNumber, lines);
         
         // Iteratively dive into the sub labels
         for(const [,sublabel] of this.elements) {
-            sublabel.getDescriptions(lines);
+            sublabel.setDescriptions(lines);
         }
     }
 
@@ -113,4 +113,21 @@ export class HierarchyEntry {
         // Use description
         return descr.join('\n');
     }
+
+
+
+    /**
+     * Iterates the complete hierarchy and calls the given handler
+     * for each element.
+     * @param label E.g. 'text.ula.print_string"
+     * @return The corresponding hierarchy element or undefined if not found.
+     */
+    public iterate(handler: (label: string, entry: HierarchyEntry) => void) {
+        // Call handler for all elements.
+        for(const [label,entry] of this.elements) {
+            handler(label, entry);
+            entry.iterate(handler);
+        }
+    }
+
 }

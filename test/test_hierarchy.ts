@@ -84,7 +84,7 @@ suite('HierarchyEntry', () => {
 
 
 
-    suite('getDescriptions', () => {
+    suite('setDescriptions', () => {
         const h1 = new HierarchyEntry() as any;
 
         test('2 hierarchy descriptions', (done) => {
@@ -106,7 +106,7 @@ suite('HierarchyEntry', () => {
                 "; H12",
                 "l12:",
             ];
-            h1.getDescriptions(lines);
+            h1.setDescriptions(lines);
             assert.equal( h1.description, " H1", "Expected description wrong.");
             assert.equal( h1.elements.get('l11').description, " H11", "Expected description wrong.");
             assert.equal( h1.elements.get('l12').description, " H12", "Expected description wrong.");
@@ -142,6 +142,43 @@ suite('HierarchyEntry', () => {
             assert.equal( r5, undefined, "Wrong entry.");
             const r6 = h1.getEntry("l12.notavailable.lend");
             assert.equal( r6, undefined, "Wrong entry.");
+            done();
+        });
+
+    });
+
+
+    suite('iterate', () => {
+        const h1 = new HierarchyEntry() as any;
+
+        test('through hierarchies', (done) => {
+            // Data
+            h1.lineNumber = 1;
+            const h11 = new HierarchyEntry();
+            const h12 = new HierarchyEntry();
+            h1.elements.set("b", h11);
+            h1.elements.set("c", h12);
+            const h121 = new HierarchyEntry();
+            h12.elements.set("d", h121);
+            const h111 = new HierarchyEntry();
+            h11.elements.set("a", h111);
+            
+            const labels = new Array<string>();
+            const entries = new Array<HierarchyEntry>();
+            h1.iterate((label: string, entry: HierarchyEntry) => {
+                labels.push(label);
+                entries.push(entry);
+            });
+
+            // Check order
+            assert.equal( labels[0], 'b');
+            assert.equal( entries[0], h11);
+            assert.equal( labels[1], 'a');
+            assert.equal( entries[1], h111);
+            assert.equal( labels[2], 'c');
+            assert.equal( entries[2], h12);
+            assert.equal( labels[3], 'd');
+            assert.equal( entries[3], h121);
             done();
         });
 
