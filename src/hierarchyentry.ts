@@ -119,14 +119,22 @@ export class HierarchyEntry {
     /**
      * Iterates the complete hierarchy and calls the given handler
      * for each element.
-     * @param label E.g. 'text.ula.print_string"
-     * @return The corresponding hierarchy element or undefined if not found.
+     * @param enterHandler(label, entry) Called on every new element.
+     * @param exitHandler(label, entry) Called when the element is "left".
+     * @param prevLabel The label from the previous iteration. Not intended to be set by
+     * the caller of this function but used in iteration.
      */
-    public iterate(handler: (label: string, entry: HierarchyEntry) => void) {
+    public iterate(enterHandler: (label: string, entry: HierarchyEntry) => void, exitHandler = (label: string, entry: HierarchyEntry) => {}, prevLabel = '') {
         // Call handler for all elements.
         for(const [label,entry] of this.elements) {
-            handler(label, entry);
-            entry.iterate(handler);
+            // Create complete label
+            let totalLabel = label;
+            if(prevLabel.length > 0)
+                totalLabel = prevLabel + '.' + totalLabel;
+            // Call handlers and call recursively
+            enterHandler(totalLabel, entry);
+            entry.iterate(enterHandler, exitHandler, totalLabel);
+            exitHandler(totalLabel, entry);
         }
     }
 

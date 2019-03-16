@@ -3,6 +3,16 @@ import { HierarchyEntry } from './hierarchyentry';
 import * as util from 'util';
 
 
+/// The main html file.
+const htmlMain = 'index.html';
+
+/// The table of contents, i.e. the links to all labels.
+const htmlToc = 'toc.html';
+
+/// The contents, i.e. all labels with descriptions.
+const htmlContents = 'contents.html';
+    
+
 /**
  * Creates the html output.
  * Basically writes 3 files / 2 frames.
@@ -63,12 +73,71 @@ export class Html {
 
 
     /**
-     * Returns the contents for the toc.html.
+     * Returns the toc.html. Table of contents.
      * I.e. all the 'exports' labels with links into the 'content'
      * iframe.
      */
     protected getTocHtml() {
-        const main = `
+        // Loop over all labels
+        let toc = '';
+        let lastNumberOfDots = 0;
+        this.hierarchy.iterate( (label, entry) => {
+            // Check for description
+            if(entry.description) {
+                // Check if we need to add a vertical space
+                const count = label.split('.').length-1;    // Number of '.' in label
+                if(lastNumberOfDots != count) {
+                    // Add a vertical space
+                    toc += '<br>\n'
+                    lastNumberOfDots = count;
+                }
+            }
+            // Write link
+            toc += '<a href="' + htmlContents + '#' + label + '">' + label + '</a><br>\n';
+        });
+
+        return toc;
+    }
+
+
+    /**
+     * Returns the contents for the contents.html.
+     * I.e. all labels with anchors and descriptions.
+     */
+    protected getContentsHtml() {
+        // Loop over all labels
+        let contents = '';
+        let lastNumberOfDots = 0;
+        this.hierarchy.iterate( (label, entry) => {
+            // Check for description
+            if(entry.description) {
+                // Check if we need to add a vertical space
+                const count = label.split('.').length-1;    // Number of '.' in label
+                if(lastNumberOfDots != count) {
+                    // Add a vertical space
+                    contents += '<br>\n'
+                    lastNumberOfDots = count;
+                }
+                // Write title and anchor
+                const hDepth = count+1;
+                contents += '<h' + hDepth + ' id="' + label + '">' + label + '</h' + hDepth + '>\n';
+                // Write description
+                if (entry.description)
+                    contents += entry.description + '\n\n';
+            }
+        });
+        
+        return contents;
+    }
+ 
+    
+    /**
+     * Writes the 3 html files to disk.
+     */
+    public writeFiles() {
+
+        // TOC
+        const formatToc = `
         <!DOCTYPE html>
 		<html lang="en">
 		<head>
@@ -79,24 +148,25 @@ export class Html {
         </body>
         </html>
         `;
+        // Create string
+        const toc = this.getTocHtml();
+        const fToc = util.format(formatToc, toc);
 
-        // Loop over all labels
-        let content = '';
-        let lastNumberOfDots = 0;
-        this.hierarchy.iterate( (label, entry) => {
-            // Check for description
-            if(entry.description) {
-                // Check if we need to add a vertical space
-                const count = label.chars().filter((ch: string) => ch == '.').count();
-                if(lastNumberOfDots != count) {
-                    // Add a vertical space
-                    content += '<br>\n'
-                    lastNumberOfDots = count;
-                }
-                // Write link
-                content += '<a href="">' + label + '</a><br>\n';
-            }
-        });
+        // Contents
+        const formatContents = `
+        <!DOCTYPE html>
+		<html lang="en">
+		<head>
+            <meta charset="UTF-8">
+        </head>
+        <body>
+        %s
+        </body>
+        </html>
+        `;
+        // Create string
+        const contents = this.getTocHtml();
+        const fContents = util.format(formatContents, contents);
 
     }
 }

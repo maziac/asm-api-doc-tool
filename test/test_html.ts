@@ -1,44 +1,50 @@
 
 
 import * as assert from 'assert';
+import { Html } from '../src/html';
 import { ListFile } from '../src/listfile';
+import { HierarchyEntry } from '../src/hierarchyentry';
 
 
-suite('ListFile', () => {
+suite('Html', () => {
 
-    suite('constructor', () => {
-
-        test('File reading', (done) => {
-            const lf = new ListFile('test/data/lf1.list')
-            assert.equal(lf.lines.length, 3, "Expected number of lines wrong.");
-            assert.equal(lf.lines[0], "L0", "Expected line wrong.");
-            assert.equal(lf.lines[1], "L1", "Expected line wrong.");
-            assert.equal(lf.lines[2], "L2", "Expected line wrong.");
+    suite('getMainHtml', () => {
+ 
+        test('Simple', (done) => {
+            const html = new Html(new HierarchyEntry()) as any;
+            const res = html.getMainHtml();
+            assert.notEqual(res, undefined);
             done();
         });
-
     });
 
-    suite('getExports', () => {
- 
-        test('Hierarchy', (done) => {
-            const lf = new ListFile('test/data/lf_exports.list')
-            assert.notEqual(lf.lines.length, 0, "File contains no lines.");
 
-            const r = lf.getExports();
-            assert.equal(r.elements.get('c'), undefined);
-            const ra = r.elements.get('a') as any;
-            assert.notEqual(ra, undefined);
-            assert.notEqual(ra.elements.get('a1'), undefined);
-            assert.notEqual(ra.elements.get('a2'), undefined);
-            const rab = ra.elements.get('b') as any;
-            assert.notEqual(rab.elements.get('a11'), undefined);
-            assert.notEqual(rab.elements.get('a12'), undefined);
-            const rac = ra.elements.get('c') as any;
-            assert.notEqual(rac.elements.get('a11'), undefined);
-            assert.equal(rac.elements.get('a12'), undefined);
-            const rb = r.elements.get('b') as any;
-            assert.notEqual(rb, undefined);
+    suite('getTocHtml', () => {
+ 
+        test('A few labels', (done) => {
+            const h = new HierarchyEntry()
+            const html = new Html(h) as any;
+
+            // Setup some hierarchy
+            h.lineNumber = 1;
+            const h11 = new HierarchyEntry();
+            const h12 = new HierarchyEntry();
+            h.elements.set("b", h11);
+            h.elements.set("c", h12);
+            const h121 = new HierarchyEntry();
+            h12.elements.set("d", h121);
+            const h111 = new HierarchyEntry();
+            h11.elements.set("a", h111);
+            
+            // Execute
+            const r = html.getTocHtml();
+
+            // Check
+            const lines = r.split('\n');
+            assert.equal(lines[0], '<a href="contents.html#b">b</a><br>');
+            assert.equal(lines[1], '<a href="contents.html#b.a">b.a</a><br>');
+            assert.equal(lines[2], '<a href="contents.html#c">c</a><br>');
+            assert.equal(lines[3], '<a href="contents.html#c.d">c.d</a><br>');
             done();
         });
     });
@@ -54,15 +60,15 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 1);
+            assert.equal( r1.lineNumber, 1);
             const r2 = e.getEntry('a.b2') as any;
-            assert.equal(r2.lineNumber, 3);
+            assert.equal( r2.lineNumber, 3);
             const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal(r3.lineNumber, 5);
+            assert.equal( r3.lineNumber, 5);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber, 7);
+            assert.equal( r4.lineNumber, 7);
             const r5 = e.getEntry('b') as any;
-            assert.equal(r5.lineNumber, 9);
+            assert.equal( r5.lineNumber, 9);
             
             done();
         });
@@ -75,7 +81,7 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('c') as any;
-            assert.equal(r1.lineNumber, -1);
+            assert.equal( r1.lineNumber, -1);
             
             done();
         });
@@ -88,15 +94,15 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 2);
+            assert.equal( r1.lineNumber, 2);
             const r2 = e.getEntry('a.b2') as any;
-            assert.equal(r2.lineNumber, 4);
+            assert.equal( r2.lineNumber, 4);
             const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal(r3.lineNumber, 6);
+            assert.equal( r3.lineNumber, 6);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber, 8);
+            assert.equal( r4.lineNumber, 8);
             const r5 = e.getEntry('b') as any;
-            assert.equal(r5.lineNumber, 10);
+            assert.equal( r5.lineNumber, 10);
             
             done();
         });
@@ -109,15 +115,15 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 2);
+            assert.equal( r1.lineNumber, 2);
             const r2 = e.getEntry('a.x.b2') as any;
-            assert.equal(r2.lineNumber, 5);
+            assert.equal( r2.lineNumber, 5);
             const r3 = e.getEntry('a.x.b1.c1') as any;
-            assert.equal(r3.lineNumber, 7);
+            assert.equal( r3.lineNumber, 7);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber,10);
+            assert.equal( r4.lineNumber,10);
             const r5 = e.getEntry('y.b') as any;
-            assert.equal(r5.lineNumber, 13);
+            assert.equal( r5.lineNumber, 13);
             
             done();
         });
@@ -130,15 +136,15 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 1);
+            assert.equal( r1.lineNumber, 1);
             const r2 = e.getEntry('a.b2') as any;
-            assert.equal(r2.lineNumber, 3);
+            assert.equal( r2.lineNumber, 3);
             const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal(r3.lineNumber, 7);
+            assert.equal( r3.lineNumber, 7);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber, 11);
+            assert.equal( r4.lineNumber, 11);
             const r5 = e.getEntry('b') as any;
-            assert.equal(r5.lineNumber, 13);
+            assert.equal( r5.lineNumber, 13);
             
             done();
         });

@@ -173,11 +173,11 @@ suite('HierarchyEntry', () => {
             // Check order
             assert.equal( labels[0], 'b');
             assert.equal( entries[0], h11);
-            assert.equal( labels[1], 'a');
+            assert.equal( labels[1], 'b.a');
             assert.equal( entries[1], h111);
             assert.equal( labels[2], 'c');
             assert.equal( entries[2], h12);
-            assert.equal( labels[3], 'd');
+            assert.equal( labels[3], 'c.d');
             assert.equal( entries[3], h121);
             done();
         });
