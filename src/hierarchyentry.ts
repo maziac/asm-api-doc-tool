@@ -1,3 +1,4 @@
+import { ListFile } from './listfile';
 
 /**
  * The elements for the hierarchy map.
@@ -99,7 +100,7 @@ export class HierarchyEntry {
         // Now take all lines that start with a comment as consecutive description.
        const descr = new Array<string>();
        for(; k>=0; k--) {
-            const line = lines[k];
+            const line = ListFile.getMainLine(lines[k]);
             const match = /^\s*;(.*)/.exec(line);
             if(!match)
                 break;  // Line that is no comment-line found

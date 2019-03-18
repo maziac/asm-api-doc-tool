@@ -59,7 +59,7 @@ export class Html {
 
           <iframe id="toc" src="toc.html" style="display:block; float:left; width:20%; height:100vh;"></iframe>
 
-          <iframe id="contents" name="contents" src="contents.html" style="display:block; float:left; width:75%; height:100vh;"></iframe>
+          <iframe id="contents" name="contents" src="contents.html" style="display:block; float:left; width:79%; height:100vh;"></iframe>
 
         </body>
         </html>
@@ -100,6 +100,7 @@ export class Html {
      * I.e. all labels with anchors and descriptions.
      */
     protected getContentsHtml() {
+        const tab = '&nbsp;'.repeat(3);
         // Loop over all labels
         let contents = '';
         let lastNumberOfDots = 0;
@@ -118,8 +119,11 @@ export class Html {
             const hDepth = count+1;
             contents += '<h' + hDepth + ' id="' + label + '">' + label + '</h' + hDepth + '>\n';
             // Write description
-            if (entry.description)
-                contents += entry.description + '\n\n';
+            if (entry.description) {
+                let descr = entry.description.replace(/\n/g, '<br>\n');
+                descr = descr.replace(/ /g, '&nbsp;');
+                descr = descr.replace(/\t/g, tab);
+                contents += descr + '\n\n';
         });
         
         return contents;

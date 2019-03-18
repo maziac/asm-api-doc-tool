@@ -21,6 +21,16 @@ export class ListFile {
 
 
     /**
+     * Returns the main line. I.e. strips the line number address and bytes.
+     * @param line The original line.
+     */
+    public static getMainLine(line: string): string {
+        const mainLine = line.substr(24);
+        return mainLine;
+    }
+
+
+    /**
      * Returns all labels with line numbers that are included in the
      * 'exports'.
      * Parses the list file lines, searches for "EXPORT" and creates a hierarchy map out of it.
@@ -87,7 +97,7 @@ export class ListFile {
             // sjasmplus allows for fix parsing so we simply drop all characters in front of the label.
             // "   4+ 0B55              ; The main game loop."
             //  0123456789012345678901234
-            const remaningLine = line.substr(24);
+            const remaningLine = ListFile.getMainLine(line);
 
             // Parsing: We are looking for MODULE.
             // A list file line with a label looks like this: 
