@@ -8,7 +8,11 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/out/main.js"
+            "program": "${workspaceFolder}/out/src/main.js",
+            "args": [
+                "examples/zxngfw.list",
+                "--out", "out/html"
+            ]
         }
     ]
 }

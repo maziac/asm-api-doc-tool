@@ -2,7 +2,8 @@
 
 import * as assert from 'assert';
 import { HierarchyEntry } from '../src/hierarchyentry';
-import { stringify } from 'querystring';
+
+
 
 suite('HierarchyEntry', () => {
 

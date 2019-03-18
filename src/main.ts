@@ -21,6 +21,9 @@ class Startup {
     // The input file.
     protected static listFileName: string;
 
+    // The output directory.
+    protected static outDir: string;
+
     /**
      * Main function. Called on startup.
      */
@@ -47,7 +50,7 @@ class Startup {
 
         // Write the html output
         const html = new Html(exports, this.title);
-
+        html.writeFiles(this.outDir);
         return 0;
     }
 
@@ -59,11 +62,6 @@ class Startup {
     protected static processArgs(args: Array<string>) {
         // Iterate all arguments
         let arg;
-        let path;
-        let addressString;
-        let addr;
-        let text;
-        let value;
         while(arg = args.shift()) {
             // Check option
             switch(arg) {
@@ -92,6 +90,14 @@ class Startup {
                     }
                     break;
 
+                // Output directory
+                case '--out':
+                    this.outDir = args.shift() as string;
+                    if(!this.outDir) {
+                        throw arg + ': Expected an output directory name.';
+                    }
+                    break;
+
                 default:
                     if(this.listFileName || arg.startsWith('-'))
                         throw "Unknown argument: '" + arg + "'";
@@ -100,8 +106,8 @@ class Startup {
             }
         }
 
-        // Print help if no filename given
-        if(!this.listFileName) {
+        // Print help if no filename or output directory given
+        if(!this.listFileName || !this.outDir) {
             this.printHelp();
             process.exit(1);
         }
@@ -121,12 +127,16 @@ Example usage:
 $ sjasmplus-api-doc-tool -title "My Great Library API" my_great_lib.list
 
 General usage:
-sjasmplus-api-doc-tool [options] list-file-name
+sjasmplus-api-doc-tool [options] <list-file-name> --out <dir>
 Options:
     -h|-help|--help: Prints this help.
     -v|-version|--version: Prints the version number.
     --title <title>: Add the <title> to the generated html file.
+    --out <dir>: The output directory. The html files are wrritten
+        here. If it does not exist it is created.
 `);
     }
 
 }
+
+Startup.main();

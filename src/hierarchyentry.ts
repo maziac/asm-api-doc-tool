@@ -34,8 +34,6 @@ export class HierarchyEntry {
      * @return The corresponding hierarchy element or undefined if not found.
      */
     public getEntry(label: string): HierarchyEntry|undefined {
-        // Split the label into parts
-        const labelParts = label.split('.');
         // Split first part
         const k = label.indexOf('.');
         if(k < 0) {
@@ -99,7 +97,7 @@ export class HierarchyEntry {
         // k now points to first non-empty line above the label.
 
         // Now take all lines that start with a comment as consecutive description.
-       const descr = [];
+       const descr = new Array<string>();
        for(; k>=0; k--) {
             const line = lines[k];
             const match = /^\s*;(.*)/.exec(line);
