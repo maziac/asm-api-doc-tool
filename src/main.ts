@@ -18,24 +18,23 @@ class Startup {
     // The title to be used for the output.
     protected static title = '';
 
+    // The input file.
+    protected static listFileName: string;
+
     /**
      * Main function. Called on startup.
      */
     public static main(): number {
   
+        this.printHelp();
+
         // Get arguments
         const 
         args = process.argv.splice(2);
-
-        // Check for help
-        if(args.length == 0) {
-            //this.printHelp();
-            return 0;
-        }
+        this.processArgs(args);
 
         // Get filename 
-        let filename = args[0];
-        const listfile = new ListFile(filename);
+        const listfile = new ListFile(this.listFileName);
 
         // Loop all exports
         const exports = listfile.getExports();
@@ -51,8 +50,6 @@ class Startup {
 
         return 0;
     }
-
-
 
 
     /**
@@ -96,11 +93,19 @@ class Startup {
                     break;
 
                 default:
-                    throw "Unknown argument: '" + arg + "'";
+                    if(this.listFileName || arg.startsWith('-'))
+                        throw "Unknown argument: '" + arg + "'";
+                    // Interprete as file name
+                    this.listFileName = arg;
             }
         }
-    }
 
+        // Print help if no filename given
+        if(!this.listFileName) {
+            this.printHelp();
+            process.exit(1);
+        }
+    }
 
 
     /**

@@ -2,7 +2,7 @@
   "name": "sjasmplus-doc-tool",
   "version": "0.1.0",
   "description": "Documentation tool for sjasmplus assembler files.",
-  "main": "main.js",
+  "main": "./out/main.js",
   "directories": {
     "test": "out/test"
   },
@@ -24,6 +24,10 @@
   },
   "author": "Thomas Busse",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/maziac/sjasmplus-api-doc-tool"
+  },
   "nyc": {
     "extension": [
       ".ts"
