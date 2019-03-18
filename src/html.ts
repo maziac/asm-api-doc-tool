@@ -30,13 +30,17 @@ export class Html {
     /// Used to store the labels.
     protected hierarchy: HierarchyEntry;
 
+    // The title to be used for the output.
+    protected title: string;
 
     /**
      * Receives the hierarchy of all labels.
      * @param hierarchy
+     * @param title The title of the html page.
      */
-    constructor(hierarchy: HierarchyEntry) {
-		this.hierarchy = hierarchy;
+    constructor(hierarchy: HierarchyEntry, title: string) {
+        this.hierarchy = hierarchy;
+        this.title = title;
     }
 
 
@@ -49,23 +53,14 @@ export class Html {
 		<html lang="en">
 		<head>
           <meta charset="UTF-8">
-          <title>Titel</title>
-          <style>
-           .menu {
-              float:left;
-              width:20%;
-              height:80%;
-            }
-            .mainContent {
-              float:left;
-              width:75%;
-              height:80%;
-            }
-          </style>
+          <title>%s</title>
         </head>
         <body>
-          <iframe class="toc" src="toc.html"></iframe>
-          <iframe class="content" src="content.html"></iframe>
+
+          <iframe id="toc" src="toc.html" style="display:block; float:left; width:20%; height:100vh;"></iframe>
+
+          <iframe id="contents" name="contents" src="contents.html" style="display:block; float:left; width:75%; height:100vh;"></iframe>
+
         </body>
         </html>
         `;
@@ -93,7 +88,7 @@ export class Html {
                 lastNumberOfDots = count;
             }
             // Write link
-            toc += '<a href="' + htmlContents + '#' + label + '">' + label + '</a><br>\n';
+            toc += '<a href="' + htmlContents + '#' + label + '" target="contents">' + label + '</a><br>\n';
         });
 
         return toc;
@@ -137,11 +132,31 @@ export class Html {
     public writeFiles(dir: string) {
         // Create contents for files.
 
+        const formatMain = `
+        <!DOCTYPE html>
+		<html lang="en">
+		<head>
+          <meta charset="UTF-8">
+          <title>%s</title>
+        </head>
+        <body>
+
+          <iframe id="toc" src="toc.html" style="display:block; float:left; width:20%; height:100vh;"></iframe>
+
+          <iframe id="contents" name="contents" src="contents.html" style="display:block; float:left; width:75%; height:100vh;"></iframe>
+
+        </body>
+        </html>
+        `;
+        // Create string
+        const fMain = util.format(formatMain, this.title);
+
         // TOC
         const formatToc = `
         <!DOCTYPE html>
 		<html lang="en">
-		<head>
+        <head>
+            <title>TOC</title>
             <meta charset="UTF-8">
         </head>
         <body>
@@ -158,6 +173,7 @@ export class Html {
         <!DOCTYPE html>
 		<html lang="en">
 		<head>
+            <title>Contents</title>
             <meta charset="UTF-8">
         </head>
         <body>
@@ -166,18 +182,15 @@ export class Html {
         </html>
         `;
         // Create string
-        const contents = this.getTocHtml();
+        const contents = this.getContentsHtml();
         const fContents = util.format(formatContents, contents);
-
-        // Main
-        const main = this.getMainHtml();
 
         // Create dir
         fs.mkdirpSync(dir);
 
         // Write files.
         const pathMain = path.join(dir, htmlMain);
-        fs.writeFileSync(pathMain, main);
+        fs.writeFileSync(pathMain, fMain);
         const pathToc = path.join(dir, htmlToc);
         fs.writeFileSync(pathToc, fToc);
         const pathContents = path.join(dir, htmlContents);

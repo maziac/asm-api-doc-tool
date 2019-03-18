@@ -10,22 +10,11 @@ const fs = require('fs-extra');
 
 suite('Html', () => {
 
-    suite('getMainHtml', () => {
- 
-        test('Simple', (done) => {
-            const html = new Html(new HierarchyEntry()) as any;
-            const res = html.getMainHtml();
-            assert.notEqual(res, undefined);
-            done();
-        });
-    });
-
-
     suite('getTocHtml', () => {
  
         test('A few labels', (done) => {
             const h = new HierarchyEntry()
-            const html = new Html(h) as any;
+            const html = new Html(h, '') as any;
 
             // Setup some hierarchy
             h.lineNumber = 1;
@@ -43,10 +32,10 @@ suite('Html', () => {
 
             // Check
             const lines = r.split('\n');
-            assert.equal(lines[0], '<a href="contents.html#b">b</a><br>');
-            assert.equal(lines[1], '<a href="contents.html#b.a">b.a</a><br>');
-            assert.equal(lines[2], '<a href="contents.html#c">c</a><br>');
-            assert.equal(lines[3], '<a href="contents.html#c.d">c.d</a><br>');
+            assert.equal(lines[0], '<a href="contents.html#b" target="contents">b</a><br>');
+            assert.equal(lines[1], '<a href="contents.html#b.a" target="contents">b.a</a><br>');
+            assert.equal(lines[2], '<a href="contents.html#c" target="contents">c</a><br>');
+            assert.equal(lines[3], '<a href="contents.html#c.d" target="contents">c.d</a><br>');
             done();
         });
     });
@@ -56,7 +45,7 @@ suite('Html', () => {
  
         test('A few labels', (done) => {
             const h = new HierarchyEntry()
-            const html = new Html(h) as any;
+            const html = new Html(h, '') as any;
 
             // Setup some hierarchy
             h.lineNumber = 1;
@@ -91,11 +80,11 @@ suite('Html', () => {
 
 
     suite('writeFiles', () => {
-        const dir = "test/tmp";
+        const dir = "out/tmp";
  
         test('A few labels', (done) => {
             const h = new HierarchyEntry()
-            const html = new Html(h) as any;
+            const html = new Html(h, '') as any;
 
             // Setup some hierarchy
             h.lineNumber = 1;
