@@ -15,14 +15,20 @@ class Startup {
     /// The disassembler instance.
     protected static listfile: ListFile;
 
-    // The title to be used for the output.
+    /// The title to be used for the output.
     protected static title = '';
 
-    // The input file.
+    /// The input file.
     protected static listFileName: string;
 
-    // The output directory.
+    /// The output directory.
     protected static outDir: string;
+
+    /// The number of spaces for a tab.
+    protected static tabSpacesCount = 3;
+
+    /// The max number of empty lines before a label.
+    protected static maxEmptyLines = 3;
 
     /**
      * Main function. Called on startup.
@@ -46,10 +52,10 @@ class Startup {
         listfile.addLineNumbers(exports);
 
         // Get the text descriptions.
-        exports.setDescriptions(listfile.lines);
+        exports.setDescriptions(listfile.lines, this.maxEmptyLines);
 
         // Write the html output
-        const html = new Html(exports, this.title);
+        const html = new Html(exports, this.title, this.tabSpacesCount);
         html.writeFiles(this.outDir);
         return 0;
     }
@@ -98,6 +104,21 @@ class Startup {
                     }
                     break;
 
+                // Tabs
+                case '--tab':
+                this.tabSpacesCount = parseInt(args.shift() as string);
+                    if(isNaN(this.tabSpacesCount)) {
+                        throw arg + ': Expected number of spaces for a tab.';
+                    }   break;
+
+                // Number of allowed max. emptylines above a label.
+                case '--max-empty-lines':
+                    this.maxEmptyLines = parseInt(args.shift() as string);
+                    if(isNaN(this.maxEmptyLines)) {
+                        throw arg + ': Expected maximum number of empty lines before a comment.';
+                    }
+                    break;
+
                 default:
                     if(this.listFileName || arg.startsWith('-'))
                         throw "Unknown argument: '" + arg + "'";
@@ -132,8 +153,15 @@ Options:
     -h|-help|--help: Prints this help.
     -v|-version|--version: Prints the version number.
     --title <title>: Add the <title> to the generated html file.
-    --out <dir>: The output directory. The html files are wrritten
+    --out <dir>: The output directory. The html files are written
         here. If it does not exist it is created.
+    --tab <count-spaces>: The number of spaces to use for a tab.
+        Default is ${this.tabSpacesCount}.
+    --max-empty-lines: The maximum allowed number of empty    
+        lines before a comment. If tehre are more empty lines
+        between comment and label the comment is not 
+        associated with the label.
+        Default is ${this.maxEmptyLines}.
 `);
     }
 

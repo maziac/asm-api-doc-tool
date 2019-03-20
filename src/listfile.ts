@@ -86,7 +86,7 @@ export class ListFile {
     public addLineNumbers(exports: HierarchyEntry) {
         // Parse all lines
         let lineNumber = -1;
-        let module = '';
+        let modules: Array<string> = [];
         for(const line of this.lines) {
             lineNumber ++;
 
@@ -107,7 +107,7 @@ export class ListFile {
                 // Remove all spaces from the label.
                 const relModule = moduleMatch[1];  // e.g. "text"
                 // Add relative module
-                module = (module.length == 0) ? relModule : module + '.' + relModule;
+                modules.push(relModule);
                 // Next line 
                 continue;
             }
@@ -118,23 +118,22 @@ export class ListFile {
             const endmoduleMatch = /^\s+endmodule\s*$/i.exec(remaningLine);
             if(endmoduleMatch) {
                 // Remove last relative module
-                const k = module.lastIndexOf('.');  // Could be -1, that's OK.
-                module = module.substr(0,k);
+                modules.pop();
                 // Next line 
                 continue;
             }
 
-            // Parsing: We are looking for labels.
+            // Parsing: We are looking for labels. Local labels are omitted.
             // A list file line with a label looks like this: 
             // "  76+ 0A8E              ula.print_char: "
-            const labelMatch = /^([\w\.]+):?\s*(;.*)?$/i.exec(remaningLine);
+            const labelMatch = /^(\w[\w\.]*):?\s*(.*)/i.exec(remaningLine);
             if(labelMatch) {
                 // Remove all spaces from the label.
                 const relLabel = labelMatch[1];  // e.g. "ula.print.char"
                 // Add module
                 let label = relLabel;
-                if(module.length > 0)
-                    label = module + '.' + label;
+                if(modules.length > 0)
+                    label = modules.join('.') + '.' + label;
                 // Search for label in exports
                 const entry = exports.getEntry(label);
                 // Check if label should be exported

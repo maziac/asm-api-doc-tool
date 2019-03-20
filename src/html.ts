@@ -1,4 +1,4 @@
-import { HierarchyEntry } from './hierarchyentry';
+import { HierarchyEntry, LabelType } from './hierarchyentry';
 import * as util from 'util';
 import * as path from 'path';
 const fs = require('fs-extra');
@@ -12,6 +12,9 @@ const htmlToc = 'toc.html';
 /// The contents, i.e. all labels with descriptions.
 const htmlContents = 'contents.html';
     
+/// The main html file.
+const htmlCss = 'stylesheet.css';
+
 
 /**
  * Creates the html output.
@@ -30,40 +33,22 @@ export class Html {
     /// Used to store the labels.
     protected hierarchy: HierarchyEntry;
 
-    // The title to be used for the output.
+    /// The title to be used for the output.
     protected title: string;
+
+    /// The number of spaces for a tab.
+    protected tabSpacesCount = 3;
 
     /**
      * Receives the hierarchy of all labels.
      * @param hierarchy
      * @param title The title of the html page.
+     * @param tabSpacesCount The number of spaces for a tab.
      */
-    constructor(hierarchy: HierarchyEntry, title: string) {
+    constructor(hierarchy: HierarchyEntry, title: string, tabSpacesCount: number) {
         this.hierarchy = hierarchy;
         this.title = title;
-    }
-
-
-    /**
-     * Returns the contents for the main.html which creates the 2 iframes.
-     */
-    protected getMainHtml() {
-        return `
-        <!DOCTYPE html>
-		<html lang="en">
-		<head>
-          <meta charset="UTF-8">
-          <title>%s</title>
-        </head>
-        <body>
-
-          <iframe id="toc" src="toc.html" style="display:block; float:left; width:20%; height:100vh;"></iframe>
-
-          <iframe id="contents" name="contents" src="contents.html" style="display:block; float:left; width:79%; height:100vh;"></iframe>
-
-        </body>
-        </html>
-        `;
+        this.tabSpacesCount = tabSpacesCount;
     }
 
 
@@ -77,18 +62,15 @@ export class Html {
         let toc = '';
         let lastNumberOfDots = 0;
         this.hierarchy.iterate( (label, entry) => {
-            // Check for description
-            if(entry.description) {
-                // Check if we need to add a vertical space
-                const count = label.split('.').length-1;    // Number of '.' in label
-                if(lastNumberOfDots < count) {
-                    // Add a vertical space
-                    toc += '<br>\n';
-                }
-                lastNumberOfDots = count;
+            // Check if we need to add a vertical space
+            const count = label.split('.').length-1;    // Number of '.' in label
+            if(lastNumberOfDots > count) {
+                // Add a vertical space
+                toc += '<br>\n';
             }
+            lastNumberOfDots = count;
             // Write link
-            toc += '<a href="' + htmlContents + '#' + label + '" target="contents">' + label + '</a><br>\n';
+            toc += '<a class="TOC_' + LabelType[entry.labelType] + '" href="' + htmlContents + '#' + label + '" target="contents">' + label + '</a><br>\n';
         });
 
         return toc;
@@ -100,30 +82,40 @@ export class Html {
      * I.e. all labels with anchors and descriptions.
      */
     protected getContentsHtml() {
-        const tab = '&nbsp;'.repeat(3);
+        const tab = '&nbsp;'.repeat(this.tabSpacesCount);
         // Loop over all labels
         let contents = '';
         let lastNumberOfDots = 0;
+        let lastMainModule;
         this.hierarchy.iterate( (label, entry) => {
-            const count = label.split('.').length-1;    // Number of '.' in label
-            // Check for description
-            if(entry.description) {
-                // Check if we need to add a vertical space
-                if(lastNumberOfDots < count) {
-                    // Add a vertical space
-                    contents += '<br>\n';
-                }
-                lastNumberOfDots = count;
+            const labelSplit = label.split('.');
+            const mainModule = labelSplit[0];
+            labelSplit.pop();
+            const count = labelSplit.length;    // Number of '.' in label
+            // Check if we need to add a vertical space
+            if(lastNumberOfDots < count) {
+                // Add a vertical space
+                contents += '<br>\n';
             }
+            lastNumberOfDots = count;
+            // Check if we need to add a horizontal line
+            if(mainModule != lastMainModule) {
+                contents += '<br><hr><br>\n'; 
+                lastMainModule = mainModule;
+            }
+        
+            // Get sectionClass
+            const labelType = LabelType[entry.labelType];
             // Write title and anchor
-            const hDepth = count+1;
-            contents += '<h' + hDepth + ' id="' + label + '">' + label + '</h' + hDepth + '>\n';
+            const hDepth = 1; //count+1;
+            contents += '<h' + hDepth + '  class="' + labelType + '" id="' + label + '">' + label + ':</h' + hDepth + '>\n';
             // Write description
             if (entry.description) {
                 let descr = entry.description.replace(/\n/g, '<br>\n');
                 descr = descr.replace(/ /g, '&nbsp;');
                 descr = descr.replace(/\t/g, tab);
-                contents += descr + '\n\n';
+                contents += descr + '<br><br>\n\n';
+            }
         });
         
         return contents;
@@ -135,11 +127,63 @@ export class Html {
      */
     public writeFiles(dir: string) {
         // Create contents for files.
+        const stylesheetCss = `
+        .MODULE {
+            color: black;
+        }
+        .CODE {
+            color: black;
+        }
+        .DATA {
+            color: green;
+        }
+        .CONST {
+            color: purple;
+        }
+
+        .UNKNOWN::before, .CODE::before, .CONST::before, .DATA::before {
+            content: attr(class);
+            color: white;
+            background-color: black;
+            font-size: small;
+            margin-right: 1em;
+            position: relative;
+            top: -1em;
+            border-radius: 0.25em;
+            padding: 0.15em;
+        }
+
+        .CONST::before {
+            background-color: purple;
+        }
+        
+        .CODE::before {
+            background-color: black;
+        }
+        
+        .DATA::before {
+            background-color: green;
+        }
+        
+        .TOC_MODULE {
+            color: black;
+        }
+        .TOC_CODE {
+            color: black;
+        }
+        .TOC_DATA {
+            color: green;
+        }
+        .TOC_CONST {
+            color: purple;
+        }
+        `;
 
         const formatMain = `
         <!DOCTYPE html>
 		<html lang="en">
-		<head>
+        <head>
+          <link rel="stylesheet" href="${htmlCss}">
           <meta charset="UTF-8">
           <title>%s</title>
         </head>
@@ -147,7 +191,7 @@ export class Html {
 
           <iframe id="toc" src="toc.html" style="display:block; float:left; width:20%; height:100vh;"></iframe>
 
-          <iframe id="contents" name="contents" src="contents.html" style="display:block; float:left; width:75%; height:100vh;"></iframe>
+          <iframe id="contents" name="contents" src="contents.html" style="display:block; float:left; width:79%; height:100vh;"></iframe>
 
         </body>
         </html>
@@ -160,6 +204,7 @@ export class Html {
         <!DOCTYPE html>
 		<html lang="en">
         <head>
+            <link rel="stylesheet" href="${htmlCss}">
             <title>TOC</title>
             <meta charset="UTF-8">
         </head>
@@ -176,7 +221,8 @@ export class Html {
         const formatContents = `
         <!DOCTYPE html>
 		<html lang="en">
-		<head>
+        <head>
+            <link rel="stylesheet" href="${htmlCss}">
             <title>Contents</title>
             <meta charset="UTF-8">
         </head>
@@ -193,6 +239,8 @@ export class Html {
         fs.mkdirpSync(dir);
 
         // Write files.
+        const pathCss = path.join(dir, htmlCss);
+        fs.writeFileSync(pathCss, stylesheetCss);
         const pathMain = path.join(dir, htmlMain);
         fs.writeFileSync(pathMain, fMain);
         const pathToc = path.join(dir, htmlToc);

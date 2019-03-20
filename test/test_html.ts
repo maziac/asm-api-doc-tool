@@ -14,7 +14,7 @@ suite('Html', () => {
  
         test('A few labels', (done) => {
             const h = new HierarchyEntry()
-            const html = new Html(h, '') as any;
+            const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
             h.lineNumber = 1;
@@ -45,7 +45,7 @@ suite('Html', () => {
  
         test('A few labels', (done) => {
             const h = new HierarchyEntry()
-            const html = new Html(h, '') as any;
+            const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
             h.lineNumber = 1;
@@ -66,13 +66,13 @@ suite('Html', () => {
 
             // Check
             const lines = r.split('\n');
-            assert.equal(lines[0], '<h1 id="b">b</h1>');
-            assert.equal(lines[2], '<h2 id="b.a">b.a</h2>');
-            assert.equal(lines[3], 'descr111');
+            assert.equal(lines[0], '<h1 id="b">b:</h1>');
+            assert.equal(lines[2], '<h2 id="b.a">b.a:</h2>');
+            assert.equal(lines[3], 'descr111<br><br>');
 
-            assert.equal(lines[5], '<h1 id="c">c</h1>');
-            assert.equal(lines[6], 'descr12');
-            assert.equal(lines[8], '<h2 id="c.d">c.d</h2>');
+            assert.equal(lines[5], '<h1 id="c">c:</h1>');
+            assert.equal(lines[6], 'descr12<br><br>');
+            assert.equal(lines[8], '<h2 id="c.d">c.d:</h2>');
             
             done();
         });
@@ -82,9 +82,9 @@ suite('Html', () => {
     suite('writeFiles', () => {
         const dir = "out/tmp";
  
-        test('A few labels', (done) => {
+        test('Write 3 files', (done) => {
             const h = new HierarchyEntry()
-            const html = new Html(h, '') as any;
+            const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
             h.lineNumber = 1;
