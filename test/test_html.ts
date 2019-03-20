@@ -32,10 +32,10 @@ suite('Html', () => {
 
             // Check
             const lines = r.split('\n');
-            assert.equal(lines[0], '<a href="contents.html#b" target="contents">b</a><br>');
-            assert.equal(lines[1], '<a href="contents.html#b.a" target="contents">b.a</a><br>');
-            assert.equal(lines[2], '<a href="contents.html#c" target="contents">c</a><br>');
-            assert.equal(lines[3], '<a href="contents.html#c.d" target="contents">c.d</a><br>');
+            assert.equal(lines[0], '<a class="TOC_undefined" href="contents.html#b" target="contents">b</a><br>');
+            assert.equal(lines[1], '<a class="TOC_undefined" href="contents.html#b.a" target="contents">b.a</a><br>');
+            assert.equal(lines[3], '<a class="TOC_undefined" href="contents.html#c" target="contents">c</a><br>');
+            assert.equal(lines[4], '<a class="TOC_undefined" href="contents.html#c.d" target="contents">c.d</a><br>');
             done();
         });
     });
@@ -66,13 +66,13 @@ suite('Html', () => {
 
             // Check
             const lines = r.split('\n');
-            assert.equal(lines[0], '<h1 id="b">b:</h1>');
-            assert.equal(lines[2], '<h2 id="b.a">b.a:</h2>');
-            assert.equal(lines[3], 'descr111<br><br>');
+            assert.equal(lines[1], '<h1 class="undefined" id="b">b:</h1>');
+            assert.equal(lines[3], '<h1 class="undefined" id="b.a">b.a:</h1>');
+            assert.equal(lines[4], 'descr111<br><br>');
 
-            assert.equal(lines[5], '<h1 id="c">c:</h1>');
-            assert.equal(lines[6], 'descr12<br><br>');
-            assert.equal(lines[8], '<h2 id="c.d">c.d:</h2>');
+            assert.equal(lines[7], '<h1 class="undefined" id="c">c:</h1>');
+            assert.equal(lines[8], 'descr12<br><br>');
+            assert.equal(lines[11], '<h1 class="undefined" id="c.d">c.d:</h1>');
             
             done();
         });
@@ -82,7 +82,7 @@ suite('Html', () => {
     suite('writeFiles', () => {
         const dir = "out/tmp";
  
-        test('Write 3 files', (done) => {
+        test('Write 4 files', (done) => {
             const h = new HierarchyEntry()
             const html = new Html(h, '', 3) as any;
 
@@ -107,6 +107,8 @@ suite('Html', () => {
             html.writeFiles(dir);
 
             // Check that the 3 files exist (not the contents)
+            const pathCss = path.join(dir, 'stylesheet.css');
+            assert.ok(fs.exists(pathCss));
             const pathMain = path.join(dir, 'index.html');
             assert.ok(fs.exists(pathMain));
             const pathToc = path.join(dir, 'toc.html');
