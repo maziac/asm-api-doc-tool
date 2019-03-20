@@ -33,16 +33,22 @@ export class HierarchyEntry {
     public description: string|undefined;
 
     /// The type of the label (code, data or const).
-    public labelType : LabelType;
+    public labelType: LabelType;
+
+    /// The line that should be printed. Normally the label itself, but 
+    /// e.g. for const it also includes the constant data.
+    public printLabel: string;
 
 
     /**
      * Initializes the entry.
+     * @param label E.g. "sprite.move"
      */
-    constructor() {
+    constructor(label?: string) {
         this.lineNumber = -1;   // undefined
         this.elements = new Map<string,HierarchyEntry>();
         this.description = undefined;
+        this.printLabel = label as any;
     }
 
 
@@ -91,6 +97,12 @@ export class HierarchyEntry {
         // Check the type
         const len = linesUntilNextCmd.length;
         this.labelType = this.getLabelType(linesUntilNextCmd[len-1]);
+
+        // Change the printed label if it is a EQU
+        if(this.labelType == LabelType.CONST) {
+            const equText = this.getEqu(linesUntilNextCmd); 
+            this.printLabel += ' = ' + equText;
+        }
 
         // Iteratively dive into the sub labels
         for(const [, entry] of this.elements) {
@@ -254,5 +266,26 @@ export class HierarchyEntry {
             || found == 'dw')   return LabelType.DATA;
         // Everything else is code
         return LabelType.CODE;
+    }
+
+
+    /**
+     * Returns the text after EQU and before any comment.
+     * @param linesUntilNextCmd Only the last line is used.
+     * @return The text with the constant.
+     */
+    protected getEqu(linesUntilNextCmd: Array<string>): string|undefined {
+        // Get last line
+        const len = linesUntilNextCmd.length;
+        const line = linesUntilNextCmd[len-1];
+        if(!line)
+            return undefined;
+        // Extract text after equ.
+        const match = /^[^;]*\Wequ\s+([^;]*?)\s*(;.*)?$/i.exec(line);
+        if(!match) 
+            return undefined;
+        // Return
+        const result = match[1];
+        return result;
     }
 }

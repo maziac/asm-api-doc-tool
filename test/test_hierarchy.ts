@@ -418,5 +418,60 @@ suite('HierarchyEntry', () => {
             done();
         });
     });
+
+
+    suite('getEqu', () => {
+        const h = new HierarchyEntry() as any;
+
+        test('No items', (done) => {
+            const r = h.getEqu([]);
+            assert.equal(r, undefined);
+            done();
+        });
+
+        test('No match', (done) => {
+            const r = h.getEqu([
+                "",
+                " noequ 55"
+            ]);
+            assert.equal(r, undefined);
+            done();
+        });
+
+        test('Matches', (done) => {
+            let r;
+            r = h.getEqu([
+                "",
+                " equ 55"
+            ]);
+            assert.equal(r, '55');
+
+            r = h.getEqu([
+                "",
+                " equ 6 ;comm"
+            ]);
+            assert.equal(r, '6');
+
+            r = h.getEqu([
+                "",
+                " equ 7;comm"
+            ]);
+            assert.equal(r, '7');
+
+            r = h.getEqu([
+                "",
+                "label: equ 6* 10 "
+            ]);
+            assert.equal(r, '6* 10');
+
+            r = h.getEqu([
+                "",
+                " equ 6+9 - HAL ;comm"
+            ]);
+            assert.equal(r, '6+9 - HAL');
+            done();
+        });
+    });
+        
  
 });

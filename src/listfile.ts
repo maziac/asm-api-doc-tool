@@ -64,7 +64,7 @@ export class ListFile {
                     let nextMap = map.elements.get(part);
                     if(!nextMap) {
                         // Create new entry 
-                        nextMap = new HierarchyEntry();
+                        nextMap = new HierarchyEntry(label);
                         map.elements.set(part, nextMap);
                     }
                     // Next

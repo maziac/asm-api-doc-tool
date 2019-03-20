@@ -108,7 +108,7 @@ export class Html {
             const labelType = LabelType[entry.labelType];
             // Write title and anchor
             const hDepth = 1; //count+1;
-            contents += '<h' + hDepth + ' class="' + labelType + '" id="' + label + '">' + label + ':</h' + hDepth + '>\n';
+            contents += '<h' + hDepth + ' class="' + labelType + '" id="' + label + '">' + entry.printLabel + ':</h' + hDepth + '>\n';
             // Write description
             if (entry.description) {
                 let descr = entry.description.replace(/\n/g, '<br>\n');
