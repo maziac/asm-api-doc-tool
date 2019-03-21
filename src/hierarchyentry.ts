@@ -261,15 +261,21 @@ export class HierarchyEntry {
      * @return 
      */
     protected getLabelType(line: string): LabelType {
-        const match = /^((\w[\w\.]*):?)?\s+([^;\s]*)/.exec(line);
-        if(!match)  return LabelType.UNKNOWN;
+        if(!line)
+            return LabelType.UNKNOWN;
+        const match = /^((\w[\w\.]*):?)?\s*([^;\s]*)/.exec(line);
+        if(!match) 
+            return LabelType.UNKNOWN;
 
         // Check command
         const found = match[3].toLowerCase();
-        if(found == 'equ')   return LabelType.CONST;
+        if(found == 'equ')  
+            return LabelType.CONST;
         if(found.startsWith('def')
             || found == 'db' 
-            || found == 'dw')   return LabelType.DATA;
+            || found == 'dw'
+            || found == 'byte'
+            || found == 'word')   return LabelType.DATA;
         // Everything else is code
         return LabelType.CODE;
     }

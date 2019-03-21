@@ -120,7 +120,8 @@ export class Html {
                 //    contents += descr + '<br><br>\n\n';
                 const descr = entry.description.replace(/\t/g, tab);
                 const escaped = this.escapeHtml(descr);
-                contents += '<pre class="DESCRIPTION"><code>' + escaped + '</code></pre>\n';
+                const link = escaped.replace(/(https?:\/\/[a-z0-9.\/?=_-]*)/i, '<a href="$1">$1</a>');
+                contents += '<pre class="DESCRIPTION"><code>' + link + '</code></pre>\n';
             }
         });
         
@@ -138,7 +139,7 @@ export class Html {
             color: black;
         }
         .CODE {
-            color: black;
+            color: darkblue;
         }
         .DATA {
             color: green;
@@ -167,7 +168,7 @@ export class Html {
         }
         
         .CODE::before {
-            background-color: black;
+            background-color: darkblue;
         }
         
         .DATA::before {
@@ -189,6 +190,7 @@ export class Html {
 
         .DESCRIPTION {
             font-size: large;
+            font: arial;
         }
         `;
 
