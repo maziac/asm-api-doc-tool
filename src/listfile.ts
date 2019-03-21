@@ -25,8 +25,6 @@ export class ListFile {
      * @param line The original line.
      */
     public static getMainLine(line: string): string {
-        console.log('getMainLine line=' + line);
-
         const mainLine = line.substr(24);
         return mainLine;
     }

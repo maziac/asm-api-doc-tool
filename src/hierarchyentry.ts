@@ -136,8 +136,6 @@ export class HierarchyEntry {
             k --;
             if(k < 0)
                 return undefined; // Already at start of file -> no description text
-            console.log('singleD line, k=', k, ' lineNumber=', lineNumber, ' lines[k]=', lines[k]);
-
             const line = ListFile.getMainLine(lines[k]);
             const match = /^\s*$/.exec(line);
             if(!match)
@@ -206,7 +204,6 @@ export class HierarchyEntry {
         if(lineNumber >= len || lineNumber < 0)
             return resultLines;
         // Check first line
-        console.log('firstLine');
         const firstLine = ListFile.getMainLine(lines[lineNumber])
         resultLines.push(firstLine);
         const matchFirstLine = /^\w[\w\.]*:?\s+[^;\s]+/.exec(firstLine);
@@ -214,7 +211,6 @@ export class HierarchyEntry {
             return resultLines;
         // Loop other lines
         for(let k=lineNumber+1; k<len; k++) {
-            console.log('line');
             const line = ListFile.getMainLine(lines[k])
             // Check if it starts with a label
             const match2 = /^[\w\.]+/.exec(line);

@@ -92,10 +92,9 @@ suite('HierarchyEntry', () => {
 
 
     suite('setDescriptions', () => {
-        const h1 = new HierarchyEntry() as any;
-
-        test('2 hierarchy descriptions', (done) => {
+         test('2 hierarchy descriptions', (done) => {
             // Data
+            const h1 = new HierarchyEntry() as any;
             h1.lineNumber = 1;
             const h11 = new HierarchyEntry();
             const h12 = new HierarchyEntry();
@@ -122,6 +121,7 @@ suite('HierarchyEntry', () => {
 
         test('After-comments', (done) => {
             // Data
+            const h1 = new HierarchyEntry() as any;
             h1.lineNumber = 1;
             
             // Lines
@@ -419,59 +419,4 @@ suite('HierarchyEntry', () => {
         });
     });
 
-
-    suite('getEqu', () => {
-        const h = new HierarchyEntry() as any;
-
-        test('No items', (done) => {
-            const r = h.getEqu([]);
-            assert.equal(r, undefined);
-            done();
-        });
-
-        test('No match', (done) => {
-            const r = h.getEqu([
-                "",
-                " noequ 55"
-            ]);
-            assert.equal(r, undefined);
-            done();
-        });
-
-        test('Matches', (done) => {
-            let r;
-            r = h.getEqu([
-                "",
-                " equ 55"
-            ]);
-            assert.equal(r, '55');
-
-            r = h.getEqu([
-                "",
-                " equ 6 ;comm"
-            ]);
-            assert.equal(r, '6');
-
-            r = h.getEqu([
-                "",
-                " equ 7;comm"
-            ]);
-            assert.equal(r, '7');
-
-            r = h.getEqu([
-                "",
-                "label: equ 6* 10 "
-            ]);
-            assert.equal(r, '6* 10');
-
-            r = h.getEqu([
-                "",
-                " equ 6+9 - HAL ;comm"
-            ]);
-            assert.equal(r, '6+9 - HAL');
-            done();
-        });
-    });
-        
- 
 });
