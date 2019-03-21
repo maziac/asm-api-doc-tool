@@ -68,11 +68,11 @@ suite('Html', () => {
             const lines = r.split('\n');
             assert.equal(lines[1], '<h1 class="undefined" id="b">h11:</h1>');
             assert.equal(lines[3], '<h1 class="undefined" id="b.a">h111:</h1>');
-            assert.equal(lines[4], 'descr111<br><br>');
+            assert.equal(lines[4], '<pre><code>descr111</code></pre>');
 
-            assert.equal(lines[7], '<h1 class="undefined" id="c">h12:</h1>');
-            assert.equal(lines[8], 'descr12<br><br>');
-            assert.equal(lines[11], '<h1 class="undefined" id="c.d">h121:</h1>');
+            assert.equal(lines[6], '<h1 class="undefined" id="c">h12:</h1>');
+            assert.equal(lines[7], '<pre><code>descr12</code></pre>');
+            assert.equal(lines[9], '<h1 class="undefined" id="c.d">h121:</h1>');
             
             done();
         });
@@ -115,6 +115,24 @@ suite('Html', () => {
             assert.ok(fs.exists(pathToc));
             const pathContents = path.join(dir, 'contents.html');
             assert.ok(fs.exists(pathContents));
+            
+            done();
+        });
+    });
+
+
+    suite('escapeHtml', () => {
+  
+        test('Escaping', (done) => {
+            const h = new HierarchyEntry()
+            const html = new Html(h, '', 3);
+            let r;
+
+            r = html.escapeHtml('');
+            assert.equal(r, '');
+
+            r = html.escapeHtml('& < > "');
+            assert.equal(r, '&amp; &lt; &gt; &#34;');
             
             done();
         });

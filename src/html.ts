@@ -116,7 +116,8 @@ export class Html {
                 //    descr = descr.replace(/\t/g, tab);
                 //    contents += descr + '<br><br>\n\n';
                 const descr = entry.description.replace(/\t/g, tab);
-                contents += '<pre><code>' + descr + '</code></pre>';
+                const escaped = this.escapeHtml(descr);
+                contents += '<pre class="DESCRIPTION"><code>' + escaped + '</code></pre>\n';
             }
         });
         
@@ -249,5 +250,24 @@ export class Html {
         fs.writeFileSync(pathToc, fToc);
         const pathContents = path.join(dir, htmlContents);
         fs.writeFileSync(pathContents, fContents);
+    }
+
+
+    /**
+     * Escapes the given text.
+     * @param text Text to 'escape'.
+     * @return the escaped text.
+     */
+    public escapeHtml(text: string) {
+        var f = function(tag) {
+            var charsToReplace = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&#34;'
+            };
+            return charsToReplace[tag] || tag;
+        }
+        return text.replace(/[&<>"]/g, f);    
     }
 }
