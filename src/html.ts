@@ -82,26 +82,29 @@ export class Html {
      * I.e. all labels with anchors and descriptions.
      */
     protected getContentsHtml() {
-        const tab = '&nbsp;'.repeat(this.tabSpacesCount);
+        //const tab = '&nbsp;'.repeat(this.tabSpacesCount);
+        const tab = ' '.repeat(this.tabSpacesCount);
         // Loop over all labels
         let contents = '';
         let lastNumberOfDots = 0;
         let lastMainModule;
+        let lastLabelType = LabelType.UNKNOWN;
         this.hierarchy.iterate( (label, entry) => {
             const labelSplit = label.split('.');
             const mainModule = labelSplit[0];
             labelSplit.pop();
             const count = labelSplit.length;    // Number of '.' in label
-            // Check if we need to add a vertical space
+             // Check if we need to add a vertical space
             if(lastNumberOfDots < count) {
                 // Add a vertical space
                 contents += '<br>\n';
             }
             lastNumberOfDots = count;
             // Check if we need to add a horizontal line
-            if(mainModule != lastMainModule) {
+            if(mainModule != lastMainModule || (entry.labelType != lastLabelType && entry.labelType == LabelType.UNKNOWN ) {
                 contents += '<br><hr><br>\n'; 
                 lastMainModule = mainModule;
+                lastLabelType = entry.labelType;
             }
         
             // Get sectionClass
@@ -144,7 +147,7 @@ export class Html {
             color: purple;
         }
 
-        .UNKNOWN::before, .CODE::before, .CONST::before, .DATA::before {
+        .CODE::before, .CONST::before, .DATA::before {
             content: attr(class);
             color: white;
             background-color: black;
@@ -156,6 +159,9 @@ export class Html {
             padding: 0.15em;
         }
 
+        .UNKNOWN::before {
+            content: "";
+        }
         .CONST::before {
             background-color: purple;
         }
@@ -179,6 +185,10 @@ export class Html {
         }
         .TOC_CONST {
             color: purple;
+        }
+
+        .DESCRIPTION {
+            font-size: large;
         }
         `;
 
@@ -265,11 +275,10 @@ export class Html {
                 '<': '&lt;',
                 '>': '&gt;',
                 '"': '&quot;',
-                "'": '&#39;',
-                '/': '&#2F;'
+                "'": '&#39;'
             };
             return charsToReplace[tag];
         }
-        return text.replace(/[&<>"'\/]/g, f);    
+        return text.replace(/[&<>"']/g, f);    
     }
 }

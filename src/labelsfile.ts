@@ -45,12 +45,14 @@ export class LabelsFile {
                 // Divide dots and put all parts in an own map
                 const labelParts = label.split('.');
                 let map = hierarchyMap;
+                let subLabel;
                 for(const part of labelParts) {
+                    subLabel = (subLabel) ? subLabel+'.'+part : part;
                     // Check if label already exists in map
                     let nextMap = map.elements.get(part);
                     if(!nextMap) {
                         // Create new entry 
-                        nextMap = new HierarchyEntry(label);
+                        nextMap = new HierarchyEntry(subLabel);
                         map.elements.set(part, nextMap);
                     }
                     // Next

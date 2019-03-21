@@ -131,8 +131,8 @@ suite('Html', () => {
             r = html.escapeHtml('');
             assert.equal(r, '');
 
-            r = html.escapeHtml('& < > " /');
-            assert.equal(r, '&amp; &lt; &gt; &quot; &#2F;');
+            r = html.escapeHtml('& < > "');
+            assert.equal(r, '&amp; &lt; &gt; &quot;');
             
             r = html.escapeHtml("'");
             assert.equal(r, '&#39;');
