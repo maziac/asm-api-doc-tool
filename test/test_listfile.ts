@@ -2,6 +2,7 @@
 
 import * as assert from 'assert';
 import { ListFile } from '../src/listfile';
+import { LabelsFile } from '../src/labelsfile';
 
 
 suite('ListFile', () => {
@@ -19,38 +20,16 @@ suite('ListFile', () => {
 
     });
 
-    suite('getExports', () => {
- 
-        test('Hierarchy', (done) => {
-            const lf = new ListFile('test/data/lf_exports.list')
-            assert.notEqual(lf.lines.length, 0, "File contains no lines.");
-
-            const r = lf.getExports();
-            assert.equal(r.elements.get('c'), undefined);
-            const ra = r.elements.get('a') as any;
-            assert.notEqual(ra, undefined);
-            assert.notEqual(ra.elements.get('a1'), undefined);
-            assert.notEqual(ra.elements.get('a2'), undefined);
-            const rab = ra.elements.get('b') as any;
-            assert.notEqual(rab.elements.get('a11'), undefined);
-            assert.notEqual(rab.elements.get('a12'), undefined);
-            const rac = ra.elements.get('c') as any;
-            assert.notEqual(rac.elements.get('a11'), undefined);
-            assert.equal(rac.elements.get('a12'), undefined);
-            const rb = r.elements.get('b') as any;
-            assert.notEqual(rb, undefined);
-            done();
-        });
-    });
-
 
     suite('addLineNumbers', () => {
 
         test('All exports found', (done) => {
             const lf = new ListFile('test/data/lf_addlinenumbers.list')
             assert.notEqual(lf.lines.length, 0, "File contains no lines.");
+            const lb = new LabelsFile('test/data/lf_addlinenumbers.labels')
+            assert.notEqual(lb.lines.length, 0, "File contains no lines.");
 
-            const e = lf.getExports();
+            const e = lb.getExports();
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
@@ -70,8 +49,10 @@ suite('ListFile', () => {
         test('Non existing export', (done) => {
             const lf = new ListFile('test/data/lf_addlinenumbers2.list')
             assert.notEqual(lf.lines.length, 0, "File contains no lines.");
+            const lb = new LabelsFile('test/data/lf_addlinenumbers2.labels')
+            assert.notEqual(lb.lines.length, 0, "File contains no lines.");
 
-            const e = lf.getExports();
+            const e = lb.getExports();
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('c') as any;
@@ -83,8 +64,10 @@ suite('ListFile', () => {
         test('Simple module', (done) => {
             const lf = new ListFile('test/data/lf_addlinenumbers_module1.list')
             assert.notEqual(lf.lines.length, 0, "File contains no lines.");
+            const lb = new LabelsFile('test/data/lf_addlinenumbers_module1.labels')
+            assert.notEqual(lb.lines.length, 0, "File contains no lines.");
 
-            const e = lf.getExports();
+            const e = lb.getExports();
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
@@ -104,8 +87,10 @@ suite('ListFile', () => {
         test('Multiple modules', (done) => {
             const lf = new ListFile('test/data/lf_addlinenumbers_module2.list')
             assert.notEqual(lf.lines.length, 0, "File contains no lines.");
+            const lb = new LabelsFile('test/data/lf_addlinenumbers_module2.labels')
+            assert.notEqual(lb.lines.length, 0, "File contains no lines.");
 
-            const e = lf.getExports();
+            const e = lb.getExports();
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
@@ -125,8 +110,10 @@ suite('ListFile', () => {
         test('Skip #-lines', (done) => {
             const lf = new ListFile('test/data/lf_addlinenumbers3.list')
             assert.notEqual(lf.lines.length, 0, "File contains no lines.");
+            const lb = new LabelsFile('test/data/lf_addlinenumbers3.labels')
+            assert.notEqual(lb.lines.length, 0, "File contains no lines.");
 
-            const e = lf.getExports();
+            const e = lb.getExports();
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;

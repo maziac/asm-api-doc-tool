@@ -25,56 +25,10 @@ export class ListFile {
      * @param line The original line.
      */
     public static getMainLine(line: string): string {
+        console.log('getMainLine line=' + line);
+
         const mainLine = line.substr(24);
         return mainLine;
-    }
-
-
-    /**
-     * Returns all labels with line numbers that are included in the
-     * 'exports'.
-     * Parses the list file lines, searches for "EXPORT" and creates a hierarchy map out of it.
-     * The map is a map-of-maps.
-     * E.g. text.layer2.print_string, text.ula.print_string, text.layer2.print_char,  will become:
-     * text - layer2 - print_string
-     *     +- ula - print_string
-     *           +- print_char
-     * @param exports Contains all labels that should be returned.
-     * @return A label / line number relationship. Not all entries in the map will contain line numbers.
-     * Only the leafs (i.e. subroutines).
-     */
-    public getExports(): HierarchyEntry {
-        // Create map
-        const hierarchyMap = new HierarchyEntry();
-        // Parse all lines
-        for(const line of this.lines) {
-            // Parsing: A list file line looks like this: 
-            // "  76  2621                  EXPORT text.ula.print_string "
-            const match = /^\s*[0-9]+[\s+]+[0-9a-f]+\s+export\s+([^;]*?)(;.*)?$/i.exec(line);
-            if(match) {
-                // Remove spaces from the label.
-                const rawLabel = match[1];
-                //const label = rawLabel.replace(/\s/g,'');
-                const label = rawLabel.trim();
-                // Divide dots and put all parts in an own map
-                const labelParts = label.split('.');
-                let map = hierarchyMap;
-                for(const part of labelParts) {
-                    // Check if label already exists in map
-                    let nextMap = map.elements.get(part);
-                    if(!nextMap) {
-                        // Create new entry 
-                        nextMap = new HierarchyEntry(label);
-                        map.elements.set(part, nextMap);
-                    }
-                    // Next
-                    map = nextMap;
-                }
-            }
-        }
-
-        // Return
-        return hierarchyMap;
     }
 
 

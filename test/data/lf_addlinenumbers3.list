@@ -12,8 +12,4 @@
   11  2621              a.b3.c1
   12  2621              ;  D:b
   13  2621              b:
-  14  2621                  EXPORT a.b1
-  15  2621                  EXPORT a.b2
-  16  2621                  EXPORT a.b1.c1
-  17  2621                  EXPORT a.b3.c1
-  18  2621                  EXPORT b
+  

@@ -39,6 +39,10 @@ export class HierarchyEntry {
     /// e.g. for const it also includes the constant data.
     public printLabel: string;
 
+    /// The value of the label. Either its address or real value (EQU).
+    /// -1 = not used.
+    public labelValue: number;
+
 
     /**
      * Initializes the entry.
@@ -49,6 +53,7 @@ export class HierarchyEntry {
         this.elements = new Map<string,HierarchyEntry>();
         this.description = undefined;
         this.printLabel = label as any;
+        this.labelValue = -1;    // Not used
     }
 
 
@@ -100,8 +105,9 @@ export class HierarchyEntry {
 
         // Change the printed label if it is a EQU
         if(this.labelType == LabelType.CONST) {
-            const equText = this.getEqu(linesUntilNextCmd); 
-            this.printLabel += ' = ' + equText;
+            let hexString = this.labelValue.toString(16).toUpperCase();
+            hexString = "0".repeat(4-hexString.length) + hexString; 
+            this.printLabel += ' = 0x' + hexString + ' (' + this.labelValue + ')';
         }
 
         // Iteratively dive into the sub labels
@@ -130,6 +136,8 @@ export class HierarchyEntry {
             k --;
             if(k < 0)
                 return undefined; // Already at start of file -> no description text
+            console.log('singleD line, k=', k, ' lineNumber=', lineNumber, ' lines[k]=', lines[k]);
+
             const line = ListFile.getMainLine(lines[k]);
             const match = /^\s*$/.exec(line);
             if(!match)
@@ -198,6 +206,7 @@ export class HierarchyEntry {
         if(lineNumber >= len || lineNumber < 0)
             return resultLines;
         // Check first line
+        console.log('firstLine');
         const firstLine = ListFile.getMainLine(lines[lineNumber])
         resultLines.push(firstLine);
         const matchFirstLine = /^\w[\w\.]*:?\s+[^;\s]+/.exec(firstLine);
@@ -205,6 +214,7 @@ export class HierarchyEntry {
             return resultLines;
         // Loop other lines
         for(let k=lineNumber+1; k<len; k++) {
+            console.log('line');
             const line = ListFile.getMainLine(lines[k])
             // Check if it starts with a label
             const match2 = /^[\w\.]+/.exec(line);
@@ -266,26 +276,5 @@ export class HierarchyEntry {
             || found == 'dw')   return LabelType.DATA;
         // Everything else is code
         return LabelType.CODE;
-    }
-
-
-    /**
-     * Returns the text after EQU and before any comment.
-     * @param linesUntilNextCmd Only the last line is used.
-     * @return The text with the constant.
-     */
-    protected getEqu(linesUntilNextCmd: Array<string>): string|undefined {
-        // Get last line
-        const len = linesUntilNextCmd.length;
-        const line = linesUntilNextCmd[len-1];
-        if(!line)
-            return undefined;
-        // Extract text after equ.
-        const match = /^[^;]*\Wequ\s+([^;]*?)\s*(;.*)?$/i.exec(line);
-        if(!match) 
-            return undefined;
-        // Return
-        const result = match[1];
-        return result;
     }
 }

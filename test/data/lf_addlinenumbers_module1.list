@@ -9,8 +9,4 @@
    8  2621              b3.c1
    9  2621               ENDMODULE
   10  2621              b:
-  11  2621                  EXPORT a.b1
-  12  2621                  EXPORT a.b2
-  13  2621                  EXPORT a.b1.c1
-  14  2621                  EXPORT a.b3.c1
-  14  2621                  EXPORT b
+  

@@ -10,7 +10,8 @@
             "name": "Launch Program",
             "program": "${workspaceFolder}/out/src/main.js",
             "args": [
-                "examples/zxngfw.list",
+                "--list", "examples/zxngfw.list",
+                "--labels", "examples/zxngfw.inc",
                 "--out", "out/html"
             ]
         }
