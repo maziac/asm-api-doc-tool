@@ -264,10 +264,12 @@ export class Html {
                 '&': '&amp;',
                 '<': '&lt;',
                 '>': '&gt;',
-                '"': '&#34;'
+                '"': '&quot;',
+                "'": '&#39;',
+                '/': '&#2F;'
             };
-            return charsToReplace[tag] || tag;
+            return charsToReplace[tag];
         }
-        return text.replace(/[&<>"]/g, f);    
+        return text.replace(/[&<>"'\/]/g, f);    
     }
 }

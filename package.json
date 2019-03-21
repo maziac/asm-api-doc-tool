@@ -1,7 +1,7 @@
 {
   "name": "sjasmplus-doc-tool",
-  "version": "0.3.0",
-  "description": "Documentation tool for sjasmplus assembler files.",
+  "version": "0.4.0",
+  "description": "API documentation tool for sjasmplus assembler files.",
   "main": "./out/main.js",
   "directories": {
     "test": "out/test"
