@@ -111,10 +111,12 @@ export class Html {
             contents += '<h' + hDepth + ' class="' + labelType + '" id="' + label + '">' + entry.printLabel + ':</h' + hDepth + '>\n';
             // Write description
             if (entry.description) {
-                let descr = entry.description.replace(/\n/g, '<br>\n');
-                descr = descr.replace(/ /g, '&nbsp;');
-                descr = descr.replace(/\t/g, tab);
-                contents += descr + '<br><br>\n\n';
+                //    let descr = entry.description.replace(/\n/g, '<br>\n');
+                //    descr = descr.replace(/ /g, '&nbsp;');
+                //    descr = descr.replace(/\t/g, tab);
+                //    contents += descr + '<br><br>\n\n';
+                const descr = entry.description.replace(/\t/g, tab);
+                contents += '<pre><code>' + descr + '</code></pre>';
             }
         });
         
