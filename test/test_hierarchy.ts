@@ -136,6 +136,25 @@ suite('HierarchyEntry', () => {
             done();
         });
 
+        test('EQU label', (done) => {
+            // Data
+            const h1 = new HierarchyEntry() as any;
+            h1.lineNumber = 1;
+            h1.labelValue = 54;
+            h1.printLabel = "l1";
+            
+            // Lines
+            const lines = [
+                "012345678901234567890123" + "; H1",
+                "012345678901234567890123" + "l1: ;AC1",
+                "012345678901234567890123" + "  equ LBLA-LBLB ;AC2",
+                "012345678901234567890123" + ""
+            ];
+            h1.setDescriptions(lines, 1);
+            assert.equal(h1.printLabel, "l1 = 0x0036 (54)");
+            done();
+        });
+
     });
 
 
