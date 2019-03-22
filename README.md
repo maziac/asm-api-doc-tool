@@ -1,9 +1,9 @@
 # API Documentation Tool for sjasmplus
 
 This simple documentation tool for assembler files takes the comments above or next to the labels, extracts them and generates a html output which is easy to navigate.
-You can decide which subprograms should be documented. Only labels from the labels file will be documented.
+You can decide which subroutines should be documented. Only labels from the labels file will be documented.
 
-If you need a tool to create the documentation for your library you might find this tool helpful.
+If you need a tool to create the documentation for your library you might find this little program helpful.
 
 
 # Features
@@ -21,7 +21,7 @@ The program is written in typescript and can be built for Linux, Mac or Windows.
 
 If you don't want to build you can use the prebuilt binaries from the releases.
 
-Just unzip and run.
+Just unzip and run from the commandline.
 
 
 # Usage
@@ -51,7 +51,7 @@ concatenate:
 data:  ; Comments after a label are also allowed.
     defs 100
 
-internal_data: ; Another comment
+internal_data: ; Another comment which is not selected for output
     defb 0
 
   ENDMODULE 
@@ -70,7 +70,7 @@ E.g.:
 
 The documentation tool works with the list and label files created by sjasmplus.
 
-First you need to create a list file with sjasmplus from your sources. E.g. (main.asm and main.list are just exemplary file names):
+You create those e.g. with (main.asm and main.list are just exemplary file names):
 
 ~~~
 sjasmplus --lst=main.list --exp=export.labels main.asm
@@ -91,13 +91,19 @@ Once you generated the list file and the labels file you can use it as input to 
 sjasmplus-doc-tool --list main.list --labels export.labels --out html
 ~~~
 
-The command above will take the list file (main.list) and the labels file (export.labels) and creates a directory 'html'.
-Then it writes the documentation html files into the directory.
+The command above will take the list file (main.list) and the labels file (export.labels) and create the directory 'html' which will contain the documentation html files.
 
-To see the html documentation simply point your browser to 'html/index.html'.
+To watch the html documentation simply point your browser to 'html/index.html'.
 
 Notes:
 
 - The 'stylesheet.css' inside 'html' allows further customization of the browser output.
 - The order of the labels in the doc output depends on the order of the EXPORTs in the main.asm (or exports.asm) file.
+- Use 'sjasmplus -h' to see all command line options.
+
+
+# Example Output
+
+![](assets/screenshot1.jpg "Example output")
+
 
