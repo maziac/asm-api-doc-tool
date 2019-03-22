@@ -7,6 +7,7 @@ import { ListFile } from './listfile';
  */
 export enum LabelType {
     UNKNOWN,
+    MODULE,
     CODE,
     DATA,
     CONST
@@ -22,8 +23,9 @@ export enum LabelType {
  */
 export class HierarchyEntry {
     
-    /// The line number of the label. Could be -1 if it does not exist.
-    public lineNumber: number;
+    /// The line number(s) of the label. Is empty if it does not exist.
+    /// Module labels can have several entries.
+    public lineNumbers: Array<number>;
 
     /// The elements included in an entry. E.g. we are at MODULE level and the
     /// elements are the subroutines. Could be an empty map.
@@ -49,11 +51,12 @@ export class HierarchyEntry {
      * @param label E.g. "sprite.move"
      */
     constructor(label?: string) {
-        this.lineNumber = -1;   // undefined
+        this.lineNumbers = [];   // empty/undefined
         this.elements = new Map<string,HierarchyEntry>();
         this.description = undefined;
         this.printLabel = label as any;
         this.labelValue = -1;    // Not used
+        this.labelType = LabelType.UNKNOWN;
     }
 
 
@@ -88,26 +91,51 @@ export class HierarchyEntry {
      * @param maxEmptyLines The max number of empty lines before a label.
      */
     public setDescriptions(lines: Array<string>, maxEmptyLines: number) {
-        // Check type of description (after-comment, lines-before-comment) and type of label (code, data, const/equ)
-        const linesUntilNextCmd = this.getLinesUntilNextCmd(this.lineNumber, lines)
-        const afterComments = this.stripAfterComments(linesUntilNextCmd);
-        if(afterComments) {
-            // Use after-comment as description.
-            this.description = afterComments;
-        }
-        else {
-            // Check description above current line
-            this.description = HierarchyEntry.getSingleDescription(this.lineNumber, lines, maxEmptyLines);
-        }
-        // Check the type
-        const len = linesUntilNextCmd.length;
-        this.labelType = this.getLabelType(linesUntilNextCmd[len-1]);
+        // Check if any line number
+        if(this.lineNumbers.length > 0) {
+            // Check type of description (after-comment, lines-before-comment) and type of label (code, data, const/equ)
+            let afterComments;
+            let linesUntilNextCmd;
+            for(const lineNumber of this.lineNumbers) {
+                linesUntilNextCmd = this.getLinesUntilNextCmd(lineNumber, lines)
+                const stripped = this.stripAfterComments(linesUntilNextCmd);
+                if(stripped) {
+                    if(afterComments)
+                        afterComments += '\n\n' + stripped;
+                    else 
+                        afterComments = stripped;
+                }
+            }
+            if(afterComments) {
+                // Use after-comment as description.
+                this.description = afterComments;
+            }
+            else {
+                // Check description above current line
+                for(const lineNumber of this.lineNumbers) {
+                    const descr = HierarchyEntry.getSingleDescription(lineNumber, lines, maxEmptyLines);
+                    if(descr) {
+                        if(this.description)
+                            this.description += '\n\n' + descr;
+                        else
+                            this.description = descr; 
+                    }
+                }
+            }
 
-        // Change the printed label if it is a EQU
-        if(this.labelType == LabelType.CONST) {
-            let hexString = this.labelValue.toString(16).toUpperCase();
-            hexString = "0".repeat(4-hexString.length) + hexString; 
-            this.printLabel += ' = 0x' + hexString + ' (' + this.labelValue + ')';
+            // Check if type already known
+            if(this.labelType == LabelType.UNKNOWN) {
+                // Check the type
+                const len = linesUntilNextCmd.length;
+                this.labelType = this.getLabelType(linesUntilNextCmd[len-1]);
+
+                // Change the printed label if it is a EQU
+                if(this.labelType == LabelType.CONST) {
+                    let hexString = this.labelValue.toString(16).toUpperCase();
+                    hexString = "0".repeat(4-hexString.length) + hexString; 
+                    this.printLabel += ' = 0x' + hexString + ' (' + this.labelValue + ')';
+                }
+            }
         }
 
         // Iteratively dive into the sub labels

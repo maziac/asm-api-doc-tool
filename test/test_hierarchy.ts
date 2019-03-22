@@ -100,8 +100,8 @@ suite('HierarchyEntry', () => {
             const h12 = new HierarchyEntry();
             h1.elements.set("l11", h11);
             h1.elements.set("l12", h12);
-            h11.lineNumber = 3;
-            h12.lineNumber = 5;
+            h11.lineNumbers = 3;
+            h12.lineNumbers = 5;
             
             // Lines
             const lines = [

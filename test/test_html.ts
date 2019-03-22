@@ -17,7 +17,7 @@ suite('Html', () => {
             const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
-            h.lineNumber = 1;
+            h.lineNumbers = 1;
             const h11 = new HierarchyEntry();
             const h12 = new HierarchyEntry();
             h.elements.set("b", h11);
@@ -48,7 +48,7 @@ suite('Html', () => {
             const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
-            h.lineNumber = 1;
+            h.lineNumbers = 1;
             const h11 = new HierarchyEntry('h11');
             const h12 = new HierarchyEntry('h12');
             h.elements.set("b", h11);
@@ -87,7 +87,7 @@ suite('Html', () => {
             const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
-            h.lineNumber = 1;
+            h.lineNumbers = 1;
             const h11 = new HierarchyEntry();
             const h12 = new HierarchyEntry();
             h.elements.set("b", h11);

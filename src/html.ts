@@ -101,7 +101,7 @@ export class Html {
             }
             lastNumberOfDots = count;
             // Check if we need to add a horizontal line
-            if(mainModule != lastMainModule || (entry.labelType != lastLabelType && entry.labelType == LabelType.UNKNOWN ) {
+            if(mainModule != lastMainModule || (entry.labelType != lastLabelType && entry.labelType == LabelType.UNKNOWN)) {
                 contents += '<br><hr><br>\n'; 
                 lastMainModule = mainModule;
                 lastLabelType = entry.labelType;
@@ -121,7 +121,7 @@ export class Html {
                 const descr = entry.description.replace(/\t/g, tab);
                 const escaped = this.escapeHtml(descr);
                 const link = escaped.replace(/(https?:\/\/[a-z0-9.\/?=_-]*)/i, '<a href="$1">$1</a>');
-                contents += '<pre class="DESCRIPTION"><code>' + link + '</code></pre>\n';
+                contents += '<pre class="DESCRIPTION"><code>' + link + '</code></pre>\n<br>\n';
             }
         });
         
@@ -148,7 +148,7 @@ export class Html {
             color: purple;
         }
 
-        .CODE::before, .CONST::before, .DATA::before {
+        .MODULE::before, .CODE::before, .CONST::before, .DATA::before {
             content: attr(class);
             color: white;
             background-color: black;
@@ -179,7 +179,7 @@ export class Html {
             color: black;
         }
         .TOC_CODE {
-            color: black;
+            color: darkblue;
         }
         .TOC_DATA {
             color: green;

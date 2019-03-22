@@ -32,7 +32,7 @@ class Startup {
     protected static tabSpacesCount = 3;
 
     /// The max number of empty lines before a label.
-    protected static maxEmptyLines = 3;
+    protected static maxEmptyLines = 0;
 
     /**
      * Main function. Called on startup.

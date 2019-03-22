@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs';
-import { HierarchyEntry } from './hierarchyentry';
+import { HierarchyEntry, LabelType } from './hierarchyentry';
 
 
 
@@ -60,6 +60,15 @@ export class ListFile {
                 const relModule = moduleMatch[1];  // e.g. "text"
                 // Add relative module
                 modules.push(relModule);
+                // Search for label in exports
+                const moduleLabel = modules.join('.');
+                const entry = exports.getEntry(moduleLabel);
+                if(entry) {
+                    // Add type
+                    entry.labelType = LabelType.MODULE;
+                    // Add line number
+                    entry.lineNumbers.push(lineNumber);
+                }
                 // Next line 
                 continue;
             }
@@ -91,7 +100,7 @@ export class ListFile {
                 // Check if label should be exported
                 if(entry) {
                     // Add line number
-                    entry.lineNumber = lineNumber;
+                    entry.lineNumbers.push(lineNumber);
                 }
             }
         }
