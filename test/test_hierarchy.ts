@@ -95,13 +95,13 @@ suite('HierarchyEntry', () => {
          test('2 hierarchy descriptions', (done) => {
             // Data
             const h1 = new HierarchyEntry() as any;
-            h1.lineNumber = 1;
+            h1.lineNumbers = [1];
             const h11 = new HierarchyEntry();
             const h12 = new HierarchyEntry();
             h1.elements.set("l11", h11);
             h1.elements.set("l12", h12);
-            h11.lineNumbers = 3;
-            h12.lineNumbers = 5;
+            h11.lineNumbers = [3];
+            h12.lineNumbers = [5];
             
             // Lines
             const lines = [
@@ -122,7 +122,7 @@ suite('HierarchyEntry', () => {
         test('After-comments', (done) => {
             // Data
             const h1 = new HierarchyEntry() as any;
-            h1.lineNumber = 1;
+            h1.lineNumbers = [1];
             
             // Lines
             const lines = [
@@ -139,7 +139,7 @@ suite('HierarchyEntry', () => {
         test('EQU label', (done) => {
             // Data
             const h1 = new HierarchyEntry() as any;
-            h1.lineNumber = 1;
+            h1.lineNumbers = [1];
             h1.labelValue = 54;
             h1.printLabel = "l1";
             
@@ -237,7 +237,7 @@ suite('HierarchyEntry', () => {
             r = h.getLabelType("     EQU  ZMAX*8   ; afffaf a");
             assert.equal(r, LabelType.CONST);
             r = h.getLabelType("EQU");
-            assert.equal(r, LabelType.UNKNOWN);
+            assert.equal(r, LabelType.CODE);    // We need to decide for something. "EQU" was placed at the label location so we assume CODE.
             r = h.getLabelType("label: equ 7");
             assert.equal(r, LabelType.CONST);
             r = h.getLabelType("label     EQU  ZMAX*8   ; afffaf a");
@@ -268,7 +268,7 @@ suite('HierarchyEntry', () => {
             r = h.getLabelType("     NEXTREG 3,4    ; afffaf a");
             assert.equal(r, LabelType.CODE);
             r = h.getLabelType("EQU");
-            assert.equal(r, LabelType.UNKNOWN);
+            assert.equal(r, LabelType.CODE);
             r = h.getLabelType("label: ld a,5");
             assert.equal(r, LabelType.CODE);
             r = h.getLabelType("label NEXTREG 3,4    ; bafffaf a");

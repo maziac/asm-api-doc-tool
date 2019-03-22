@@ -33,15 +33,15 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 1);
+            assert.equal(r1.lineNumbers[0], 1);
             const r2 = e.getEntry('a.b2') as any;
-            assert.equal(r2.lineNumber, 3);
+            assert.equal(r2.lineNumbers[0], 3);
             const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal(r3.lineNumber, 5);
+            assert.equal(r3.lineNumbers[0], 5);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber, 7);
+            assert.equal(r4.lineNumbers[0], 7);
             const r5 = e.getEntry('b') as any;
-            assert.equal(r5.lineNumber, 9);
+            assert.equal(r5.lineNumbers[0], 9);
             
             done();
         });
@@ -56,7 +56,7 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('c') as any;
-            assert.equal(r1.lineNumber, -1);
+            assert.equal(r1.lineNumbers.length, 0);
             
             done();
         });
@@ -70,16 +70,19 @@ suite('ListFile', () => {
             const e = lb.getExports();
             lf.addLineNumbers(e);
 
+            const rm = e.getEntry('a') as any;
+            assert.equal(rm.lineNumbers[0], 0);
+            assert.equal(rm.lineNumbers[1], 11);
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 2);
+            assert.equal(r1.lineNumbers[0], 2);
             const r2 = e.getEntry('a.b2') as any;
-            assert.equal(r2.lineNumber, 4);
+            assert.equal(r2.lineNumbers[0], 4);
             const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal(r3.lineNumber, 6);
+            assert.equal(r3.lineNumbers[0], 6);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber, 8);
+            assert.equal(r4.lineNumbers[0], 8);
             const r5 = e.getEntry('b') as any;
-            assert.equal(r5.lineNumber, 10);
+            assert.equal(r5.lineNumbers[0], 10);
             
             done();
         });
@@ -94,15 +97,15 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 2);
+            assert.equal(r1.lineNumbers[0], 2);
             const r2 = e.getEntry('a.x.b2') as any;
-            assert.equal(r2.lineNumber, 5);
+            assert.equal(r2.lineNumbers[0], 5);
             const r3 = e.getEntry('a.x.b1.c1') as any;
-            assert.equal(r3.lineNumber, 7);
+            assert.equal(r3.lineNumbers[0], 7);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber,10);
+            assert.equal(r4.lineNumbers[0], 10);
             const r5 = e.getEntry('y.b') as any;
-            assert.equal(r5.lineNumber, 13);
+            assert.equal(r5.lineNumbers[0], 13);
             
             done();
         });
@@ -117,15 +120,15 @@ suite('ListFile', () => {
             lf.addLineNumbers(e);
 
             const r1 = e.getEntry('a.b1') as any;
-            assert.equal(r1.lineNumber, 1);
+            assert.equal(r1.lineNumbers[0], 1);
             const r2 = e.getEntry('a.b2') as any;
-            assert.equal(r2.lineNumber, 3);
+            assert.equal(r2.lineNumbers[0], 3);
             const r3 = e.getEntry('a.b1.c1') as any;
-            assert.equal(r3.lineNumber, 7);
+            assert.equal(r3.lineNumbers[0], 7);
             const r4 = e.getEntry('a.b3.c1') as any;
-            assert.equal(r4.lineNumber, 11);
+            assert.equal(r4.lineNumbers[0], 11);
             const r5 = e.getEntry('b') as any;
-            assert.equal(r5.lineNumber, 13);
+            assert.equal(r5.lineNumbers[0], 13);
             
             done();
         });

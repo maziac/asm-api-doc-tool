@@ -17,7 +17,7 @@ suite('Html', () => {
             const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
-            h.lineNumbers = 1;
+            h.lineNumbers = [1];
             const h11 = new HierarchyEntry();
             const h12 = new HierarchyEntry();
             h.elements.set("b", h11);
@@ -32,10 +32,10 @@ suite('Html', () => {
 
             // Check
             const lines = r.split('\n');
-            assert.equal(lines[0], '<a class="TOC_undefined" href="contents.html#b" target="contents">b</a><br>');
-            assert.equal(lines[1], '<a class="TOC_undefined" href="contents.html#b.a" target="contents">b.a</a><br>');
-            assert.equal(lines[3], '<a class="TOC_undefined" href="contents.html#c" target="contents">c</a><br>');
-            assert.equal(lines[4], '<a class="TOC_undefined" href="contents.html#c.d" target="contents">c.d</a><br>');
+            assert.equal(lines[0], '<a class="TOC_UNKNOWN" href="contents.html#b" target="contents">b</a><br>');
+            assert.equal(lines[1], '<a class="TOC_UNKNOWN" href="contents.html#b.a" target="contents">b.a</a><br>');
+            assert.equal(lines[3], '<a class="TOC_UNKNOWN" href="contents.html#c" target="contents">c</a><br>');
+            assert.equal(lines[4], '<a class="TOC_UNKNOWN" href="contents.html#c.d" target="contents">c.d</a><br>');
             done();
         });
     });
@@ -48,7 +48,7 @@ suite('Html', () => {
             const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
-            h.lineNumbers = 1;
+            h.lineNumbers = [1];
             const h11 = new HierarchyEntry('h11');
             const h12 = new HierarchyEntry('h12');
             h.elements.set("b", h11);
@@ -66,13 +66,13 @@ suite('Html', () => {
 
             // Check
             const lines = r.split('\n');
-            assert.equal(lines[1], '<h1 class="undefined" id="b">h11:</h1>');
-            assert.equal(lines[3], '<h1 class="undefined" id="b.a">h111:</h1>');
+            assert.equal(lines[1], '<h1 class="UNKNOWN" id="b">h11:</h1>');
+            assert.equal(lines[3], '<h1 class="UNKNOWN" id="b.a">h111:</h1>');
             assert.equal(lines[4], '<pre class="DESCRIPTION"><code>descr111</code></pre>');
 
-            assert.equal(lines[6], '<h1 class="undefined" id="c">h12:</h1>');
-            assert.equal(lines[7], '<pre class="DESCRIPTION"><code>descr12</code></pre>');
-            assert.equal(lines[9], '<h1 class="undefined" id="c.d">h121:</h1>');
+            assert.equal(lines[7], '<h1 class="UNKNOWN" id="c">h12:</h1>');
+            assert.equal(lines[8], '<pre class="DESCRIPTION"><code>descr12</code></pre>');
+            assert.equal(lines[11], '<h1 class="UNKNOWN" id="c.d">h121:</h1>');
             
             done();
         });
@@ -87,7 +87,7 @@ suite('Html', () => {
             const html = new Html(h, '', 3) as any;
 
             // Setup some hierarchy
-            h.lineNumbers = 1;
+            h.lineNumbers = [1];
             const h11 = new HierarchyEntry();
             const h12 = new HierarchyEntry();
             h.elements.set("b", h11);
