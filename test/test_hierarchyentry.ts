@@ -155,6 +155,57 @@ suite('HierarchyEntry', () => {
             done();
         });
 
+        test('After-comments higher pritority', (done) => {
+            // Data
+            const h1 = new HierarchyEntry() as any;
+            h1.lineNumbers = [1];
+            
+            // Lines
+            const lines = [
+                "012345678901234567890123" + "; Before",
+                "012345678901234567890123" + "l1:  ; After"
+            ];
+            h1.setDescriptions(lines, 1);
+            assert.equal(h1.description, " After");
+            done();
+        });
+
+        test('Multiple before-comments', (done) => {
+            // Data
+            const h1 = new HierarchyEntry() as any;
+            h1.lineNumbers = [1, 4];
+            
+            // Lines
+            const lines = [
+                "012345678901234567890123" + "; MOD1 A",
+                "012345678901234567890123" + " MODULE m1 ",
+                "012345678901234567890123" + " ENDMODULE",
+                "012345678901234567890123" + " ; MOD1 B",
+                "012345678901234567890123" + " MODULE m1",
+                "012345678901234567890123" + " ENDMODULE",
+            ];
+            h1.setDescriptions(lines, 1);
+            assert.equal(h1.description, " MOD1 A\n\n MOD1 B");
+            done();
+        });
+
+        test('Multiple after-comments', (done) => {
+            // Data
+            const h1 = new HierarchyEntry() as any;
+            h1.lineNumbers = [0, 2];
+            
+            // Lines
+            const lines = [
+                "012345678901234567890123" + " MODULE m1 ; MOD1 A",
+                "012345678901234567890123" + " ENDMODULE",
+                "012345678901234567890123" + " MODULE m1 ; MOD1 B",
+                "012345678901234567890123" + " ENDMODULE",
+            ];
+            h1.setDescriptions(lines, 1);
+            assert.equal(h1.description, " MOD1 A\n\n MOD1 B");
+            done();
+        });
+
     });
 
 
@@ -230,7 +281,7 @@ suite('HierarchyEntry', () => {
     suite('getLabelType', () => {
         const h = new HierarchyEntry() as any;
 
-        test('Const/equ', (done) => {
+        test('Const/EQU', (done) => {
             let r;
             r = h.getLabelType(" equ 7");
             assert.equal(r, LabelType.CONST);
@@ -265,6 +316,21 @@ suite('HierarchyEntry', () => {
             let r;
             r = h.getLabelType(" ld a,5");
             assert.equal(r, LabelType.CODE);
+            r = h.getLabelType("     NEXTREG 3,4    ; afffaf a");
+            assert.equal(r, LabelType.CODE);
+            r = h.getLabelType("EQU");
+            assert.equal(r, LabelType.CODE);
+            r = h.getLabelType("label: ld a,5");
+            assert.equal(r, LabelType.CODE);
+            r = h.getLabelType("label NEXTREG 3,4    ; bafffaf a");
+            assert.equal(r, LabelType.CODE);
+            done();
+        });
+
+        test('Invalid', (done) => {
+            let r;
+            r = h.getLabelType(undefined);
+            assert.equal(r, LabelType.UNKNOWN);
             r = h.getLabelType("     NEXTREG 3,4    ; afffaf a");
             assert.equal(r, LabelType.CODE);
             r = h.getLabelType("EQU");

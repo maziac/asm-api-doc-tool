@@ -3,7 +3,7 @@
 import * as assert from 'assert';
 import { Html } from '../src/html';
 //import { ListFile } from '../src/listfile';
-import { HierarchyEntry } from '../src/hierarchyentry';
+import { HierarchyEntry, LabelType } from '../src/hierarchyentry';
 import * as path from 'path';
 const fs = require('fs-extra');
 
@@ -73,6 +73,31 @@ suite('Html', () => {
             assert.equal(lines[7], '<h1 class="UNKNOWN" id="c">h12:</h1>');
             assert.equal(lines[8], '<pre class="DESCRIPTION"><code>descr12</code></pre>');
             assert.equal(lines[11], '<h1 class="UNKNOWN" id="c.d">h121:</h1>');
+            
+            done();
+        });
+        
+        test('Horizontal line', (done) => {
+            const h = new HierarchyEntry()
+            const html = new Html(h, '', 3) as any;
+
+            // Setup some hierarchy
+            h.lineNumbers = [1];
+            const h11 = new HierarchyEntry('h11');
+            h.elements.set("b", h11);
+            const h111 = new HierarchyEntry('h121');
+            h11.elements.set("d", h111);
+            h111.labelType = LabelType.DATA;
+            const h112 = new HierarchyEntry('h111');
+            h11.elements.set("a", h112);
+            h112.labelType = LabelType.MODULE;
+            
+            // Execute
+            const r = html.getContentsHtml();
+
+            // Check
+            const lines = r.split('\n');
+            assert.equal(lines[4], '<br><hr><br>');
             
             done();
         });

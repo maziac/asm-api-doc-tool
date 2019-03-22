@@ -1,4 +1,5 @@
 import { ListFile } from './listfile';
+import assert = require('assert');
 
 
 /**
@@ -291,9 +292,10 @@ export class HierarchyEntry {
     protected getLabelType(line: string): LabelType {
         if(!line)
             return LabelType.UNKNOWN;
-        const match = /^((\w[\w\.]*):?)?\s*([^;\s]*)/.exec(line);
-        if(!match) 
-            return LabelType.UNKNOWN;
+        const match = /^((\w[\w\.]*):?)?\s*([^;\s]*)/.exec(line) as Array<string>;  // Will always find something
+        assert(match);
+        //if(!match) 
+        //    return LabelType.UNKNOWN;
 
         // Check command
         const found = match[3].toLowerCase();

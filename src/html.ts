@@ -101,7 +101,11 @@ export class Html {
             }
             lastNumberOfDots = count;
             // Check if we need to add a horizontal line
-            if(mainModule != lastMainModule || (entry.labelType != lastLabelType && entry.labelType == LabelType.UNKNOWN)) {
+            if(
+                mainModule != lastMainModule 
+                || 
+                (entry.labelType != lastLabelType 
+                    && entry.labelType == LabelType.MODULE)) {
                 contents += '<br><hr><br>\n'; 
                 lastMainModule = mainModule;
                 lastLabelType = entry.labelType;
