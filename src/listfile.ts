@@ -39,6 +39,8 @@ export class ListFile {
         // Parse all lines
         let lineNumber = -1;
         let modules: Array<string> = [];
+        let structs: Array<string> = [];
+        
         for(const line of this.lines) {
             lineNumber ++;
 
@@ -56,7 +58,7 @@ export class ListFile {
             // "  10+ 0A80                  MODULE text "
             const moduleMatch = /^\s+module\s+([\w.]+)/i.exec(remaningLine);
             if(moduleMatch) {
-                // Remove all spaces from the label.
+                // Get module.
                 const relModule = moduleMatch[1];  // e.g. "text"
                 // Add relative module
                 modules.push(relModule);
@@ -84,6 +86,30 @@ export class ListFile {
                 continue;
             }
 
+            // Parsing: We are looking for STRUCT.
+            // A list file line with a label looks like this: 
+            // " 335+ 0B55                  ENDMODULE "
+            const structMatch = /^\s+struct\s+([\w.]+)$/i.exec(remaningLine);
+            if(structMatch) {
+                // Get struct name.
+                const structName = structMatch[1];  // e.g. "ATTRIBS"
+                // Add name
+                structs.push(structName);
+                // Next line 
+                continue;
+            }
+
+            // Parsing: We are looking for STRUCT.
+            // A list file line with a label looks like this: 
+            // " 335+ 0B55                  ENDMODULE "
+            const endStructMatch = /^\s+ends\s*$/i.exec(remaningLine);
+            if(endStructMatch) {
+                // Remove 
+                structs.pop();
+                // Next line 
+                continue;
+            }
+
             // Parsing: We are looking for labels. Local labels are omitted.
             // A list file line with a label looks like this: 
             // "  76+ 0A8E              ula.print_char: "
@@ -92,15 +118,22 @@ export class ListFile {
                 // Remove all spaces from the label.
                 const relLabel = labelMatch[1];  // e.g. "ula.print.char"
                 // Add module
-                let label = relLabel;
+                let label = '';
                 if(modules.length > 0)
-                    label = modules.join('.') + '.' + label;
+                    label += modules.join('.') + '.';
+                if(structs.length > 0)
+                    label += structs.join('.') + '.';
+                label += relLabel;
                 // Search for label in exports
                 const entry = exports.getEntry(label);
                 // Check if label should be exported
                 if(entry) {
                     // Add line number
                     entry.lineNumbers.push(lineNumber);
+                    // If it is a struct component then the label is a const.
+                    if(structs.length > 0) {
+                        entry.labelType = LabelType.CONST;
+                    }
                 }
             }
         }

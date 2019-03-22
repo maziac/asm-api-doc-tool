@@ -129,13 +129,12 @@ export class HierarchyEntry {
                 // Check the type
                 const len = linesUntilNextCmd.length;
                 this.labelType = this.getLabelType(linesUntilNextCmd[len-1]);
-
-                // Change the printed label if it is a EQU
-                if(this.labelType == LabelType.CONST) {
-                    let hexString = this.labelValue.toString(16).toUpperCase();
-                    hexString = "0".repeat(4-hexString.length) + hexString; 
-                    this.printLabel += ' = 0x' + hexString + ' (' + this.labelValue + ')';
-                }
+            }
+            // Change the printed label if it is a EQU
+            if(this.labelType == LabelType.CONST) {
+                let hexString = this.labelValue.toString(16).toUpperCase();
+                hexString = "0".repeat(4-hexString.length) + hexString; 
+                this.printLabel += ' = 0x' + hexString + ' (' + this.labelValue + ')';
             }
         }
 
