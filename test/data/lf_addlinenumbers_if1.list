@@ -1,0 +1,9 @@
+   0  0000               IF 0
+   1  2621 ~             MODULE a
+   2  0000               ENDIF
+   3  2621              b: db 5 ;b-comment
+   4  2621 ~            c: db 6 ;c-comment
+   5  0000               IF 0
+   6  2621 ~             ENDMODULE
+   7  0000               ENDIF
+   8  2621                

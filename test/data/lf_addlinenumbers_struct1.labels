@@ -1,0 +1,3 @@
+a.s.c: EQU 0x03
+a.s.d: EQU 0x04
+a.s.e: EQU 0x05

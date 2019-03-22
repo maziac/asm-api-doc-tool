@@ -53,6 +53,14 @@ export class ListFile {
             //  0123456789012345678901234
             const remaningLine = ListFile.getMainLine(line);
 
+            // Skip line if too short
+            if(remaningLine.length == 0)
+                continue;
+                
+            // Skip ~ lines (but not STRUCTs)
+            if(line[11] == '~' && structs.length == 0)
+                continue;
+
             // Parsing: We are looking for MODULE.
             // A list file line with a label looks like this: 
             // "  10+ 0A80                  MODULE text "
