@@ -90,7 +90,7 @@ sjasmplus --lst=main.list --exp=export.labels main.asm exports.asm
 Once you generated the list file and the labels file you can use it as input to the doc tool.
 
 ~~~
-sjasmplus-doc-tool --list main.list --labels export.labels --out html
+./asm-api-doc-tool --list main.list --labels export.labels --out html
 ~~~
 
 The command above will take the list file (main.list) and the labels file (export.labels) and create the directory 'html' which will contain the documentation html files.
