@@ -21,7 +21,7 @@ Please note: This tool was only tested with the sjasmplus syntax. It understands
 
 The program is written in typescript and can be built for Linux, Mac or Windows.
 
-If you don't want to build you can use the prebuilt binaries from the releases.
+If you don't want to build yourself you can use the prebuilt binaries from [releases](../../releases).
 
 Just unzip and run from the commandline.
 
