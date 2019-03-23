@@ -44,7 +44,7 @@ I.e. your documentation should look like:
 ; Concatenates 2 strings and creates a new one.
 ; IN:
 ;  HL = pointer to 1rst string
-;  DE = pointer to 1rst string
+;  DE = pointer to 2nd string
 ; OUT:
 ;  HL = pointer to new concatenated string
 concatenate:
