@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}/out/src/main.js",
+            "program": "${workspaceFolder}/out/src/asm-api-doc-tool.js",
             "args": [
                 "--list", "examples/zxngfw.list",
                 "--labels", "examples/zxngfw.inc",

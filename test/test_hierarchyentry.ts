@@ -162,7 +162,7 @@ suite('HierarchyEntry', () => {
             
             // Lines
             const lines = [
-                "012345678901234567890123" + "; Before",
+                "012345678901234567890123" + "; Above",
                 "012345678901234567890123" + "l1:  ; After"
             ];
             h1.setDescriptions(lines, 1);
@@ -170,7 +170,7 @@ suite('HierarchyEntry', () => {
             done();
         });
 
-        test('Multiple before-comments', (done) => {
+        test('Multiple above-comments', (done) => {
             // Data
             const h1 = new HierarchyEntry() as any;
             h1.lineNumbers = [1, 4];

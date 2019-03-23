@@ -89,12 +89,12 @@ export class HierarchyEntry {
      * from the file.
      * I.e. the comment lines above the label are used.
      * @param lines All lines of the file.
-     * @param maxEmptyLines The max number of empty lines before a label.
+     * @param maxEmptyLines The max number of empty lines above a label.
      */
     public setDescriptions(lines: Array<string>, maxEmptyLines: number) {
         // Check if any line number
         if(this.lineNumbers.length > 0) {
-            // Check type of description (after-comment, lines-before-comment) and type of label (code, data, const/equ)
+            // Check type of description (after-comment, lines-above-comment) and type of label (code, data, const/equ)
             let afterComments;
             let linesUntilNextCmd;
             for(const lineNumber of this.lineNumbers) {

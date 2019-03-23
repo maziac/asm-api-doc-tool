@@ -1,7 +1,7 @@
    0  2621               MODULE a
    1  2621               STRUCT s
    2  2621 ~            c: BYTE ;c-comment
-   3  2621 ~            ;d-before-comment
+   3  2621 ~            ;d-above-comment
    4  2621 ~            d: WORD
    5  2621 ~            e  ;e-comment
   11  2621               ENDS

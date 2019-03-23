@@ -1,7 +1,8 @@
 import { ListFile } from './listfile';
 import { LabelsFile } from './labelsfile';
 import { Html } from './html';
-
+const pckg = require('../../package.json');
+                     
 
 
 
@@ -39,11 +40,8 @@ class Startup {
      */
     public static main(): number {
   
-        this.printHelp();
-
         // Get arguments
-        const 
-        args = process.argv.splice(2);
+        const args = process.argv.splice(2);
         this.processArgs(args);
 
         // Get filename 
@@ -88,7 +86,6 @@ class Startup {
                 case '--version':
                 case '-version':
                 case '-v':
-                    const pckg = require('../package.json');
                     console.log('Version: ' + pckg.version);
                     process.exit(0);
                     break;
@@ -136,7 +133,7 @@ class Startup {
                 case '--max-empty-lines':
                     this.maxEmptyLines = parseInt(args.shift() as string);
                     if(isNaN(this.maxEmptyLines)) {
-                        throw arg + ': Expected maximum number of empty lines before a comment.';
+                        throw arg + ': Expected maximum number of empty lines above a comment.';
                     }
                     break;
 
@@ -180,7 +177,7 @@ Options:
     --tab <count-spaces>: The number of spaces to use for a tab.
         Default is ${this.tabSpacesCount}.
     --max-empty-lines: The maximum allowed number of empty    
-        lines before a comment. If tehre are more empty lines
+        lines before a comment. If there are more empty lines
         between comment and label the comment is not 
         associated with the label.
         Default is ${this.maxEmptyLines}.

@@ -2,3 +2,4 @@ out/
 node_modules/
 .*/
 coverage/
+asm-api-doc-tool-*
