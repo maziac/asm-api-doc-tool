@@ -21,7 +21,7 @@ Please note: This tool was only tested with the sjasmplus syntax. It understands
 
 The program is written in typescript and can be built for Linux, Mac or Windows.
 
-If you don't want to build you can use the prebuilt binaries from the releases.
+If you don't want to build yourself you can use the prebuilt binaries from [releases](../../releases).
 
 Just unzip and run from the commandline.
 
@@ -44,7 +44,7 @@ I.e. your documentation should look like:
 ; Concatenates 2 strings and creates a new one.
 ; IN:
 ;  HL = pointer to 1rst string
-;  DE = pointer to 1rst string
+;  DE = pointer to 2nd string
 ; OUT:
 ;  HL = pointer to new concatenated string
 concatenate:
@@ -90,7 +90,7 @@ sjasmplus --lst=main.list --exp=export.labels main.asm exports.asm
 Once you generated the list file and the labels file you can use it as input to the doc tool.
 
 ~~~
-sjasmplus-doc-tool --list main.list --labels export.labels --out html
+./asm-api-doc-tool --list main.list --labels export.labels --out html
 ~~~
 
 The command above will take the list file (main.list) and the labels file (export.labels) and create the directory 'html' which will contain the documentation html files.
