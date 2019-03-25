@@ -1,6 +1,6 @@
 out/
 node_modules/
-.*/
+.nyc**/
 coverage/
 asm-api-doc-tool-*
 *.zip

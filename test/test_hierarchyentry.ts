@@ -2,6 +2,7 @@
 
 import * as assert from 'assert';
 import { HierarchyEntry, LabelType } from '../src/hierarchyentry';
+const fs = require('fs-extra');
 
 
 
@@ -502,6 +503,126 @@ suite('HierarchyEntry', () => {
 
             done();
         });
+    });
+
+
+    suite('writeLabelsWithCommentsRecursively', () => {
+
+        test('No children, no label', (done) => {
+            const h = new HierarchyEntry() as any;
+            const r = h.writeLabelsWithCommentsRecursively();
+            assert.equal(r, '');
+            done();
+        });
+
+        test('No children, no labelValue', (done) => {
+            const h = new HierarchyEntry() as any;
+            h.label = 'label';
+            const r = h.writeLabelsWithCommentsRecursively();
+            assert.equal(r, '');
+            done();
+        });
+
+        test('No children, with labelValue, no description', (done) => {
+            const h = new HierarchyEntry() as any;
+            h.label = 'label';
+            h.labelValue = 0xFFFF;
+            const r = h.writeLabelsWithCommentsRecursively();
+            assert.equal(r, 'label: EQU 0xFFFF\n\n');
+            done();
+        });
+
+        test('No children, with labelValue, small value', (done) => {
+            const h = new HierarchyEntry() as any;
+            h.label = 'label';
+            h.labelValue = 0x0F;
+            const r = h.writeLabelsWithCommentsRecursively();
+            assert.equal(r, 'label: EQU 0x000F\n\n');
+            done();
+        });
+
+        test('No children, with labelValue, big value', (done) => {
+            const h = new HierarchyEntry() as any;
+            h.label = 'label';
+            h.labelValue = 0x8FFFF;
+            const r = h.writeLabelsWithCommentsRecursively();
+            assert.equal(r, 'label: EQU 0x8FFFF\n\n');
+            done();
+        });
+
+        test('No children, with labelValue + description', (done) => {
+            const h = new HierarchyEntry() as any;
+            h.label = 'label';
+            h.labelValue = 0x1111;
+            h.description = "MyDescL1\nMyDescL2";
+            const r = h.writeLabelsWithCommentsRecursively();
+            assert.equal(r, ';MyDescL1\n;MyDescL2\nlabel: EQU 0x1111\n\n');
+            done();
+        });
+
+        test('Children, with labelValue + description', (done) => {
+            const h = new HierarchyEntry() as any;
+            h.label = 'label';
+            h.labelValue = 0x1111;
+            h.description = "MyDescL1";
+            const h2 = new HierarchyEntry() as any;
+            h2.label = 'label2';
+            h2.labelValue = 0x2222;
+            h.elements.set(h2.label, h2);
+            const h3 = new HierarchyEntry() as any;
+            h3.label = 'label3';
+            h3.labelValue = 0x3333;
+            h3.description = "MyDescL3";
+            h.elements.set(h3.label, h3);
+            const r = h.writeLabelsWithCommentsRecursively();
+            assert.equal(r, ';MyDescL1\nlabel: EQU 0x1111\n\nlabel2: EQU 0x2222\n\n;MyDescL3\nlabel3: EQU 0x3333\n\n');
+            done();
+        });
+
+    });
+
+
+    suite('writeLabelsWithComments', () => {
+  
+        test('Module, Children, with and without description', (done) => {
+            const h = new HierarchyEntry() as any;
+            h.label = 'label';
+            h.description = "Not seen";
+            const h2 = new HierarchyEntry() as any;
+            h2.label = 'mod1';
+            h2.description = "Not seen";
+            h.elements.set(h2.label, h2);
+            const h3 = new HierarchyEntry() as any;
+            h3.label = 'mod2';
+            h3.description = "Not seen";
+            h.elements.set(h3.label, h3);
+            const h21 = new HierarchyEntry() as any;
+            h21.label = 'mod1.l1';
+            h21.labelValue = 0x2121;
+            h21.description = "MyDescL11";
+            h2.elements.set(h21.label, h21);
+            const h31 = new HierarchyEntry() as any;
+            h31.label = 'mod2.l2';
+            h31.labelValue = 0x2222;
+            h3.elements.set(h31.label, h31);
+            const h32 = new HierarchyEntry() as any;
+            h32.label = 'mod2.l3';
+            h32.labelValue = 0x2323;
+            h32.description = "MyDescL23";
+            h3.elements.set(h32.label, h32);
+            
+            // Write file
+            const fname = 'out/tmp/test.labels'
+            h.writeLabelsWithComments(fname);
+
+            // Read file 
+            const text = fs.readFileSync(fname, 'utf8');
+            
+            assert.equal(text, ';MyDescL11\nmod1.l1: EQU 0x2121\n\nmod2.l2: EQU 0x2222\n\n;MyDescL23\nmod2.l3: EQU 0x2323\n\n');
+            
+            done();
+        });
+
     });
 
 });

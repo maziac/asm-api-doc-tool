@@ -42,33 +42,42 @@ class Startup {
      * Main function. Called on startup.
      */
     public static main(): number {
-  
-        // Get arguments
-        const args = process.argv.splice(2);
-        this.processArgs(args);
+        try {
 
-        // Get filename 
-        const listfile = new ListFile(this.listFileName);
+            // Get arguments
+            const args = process.argv.splice(2);
+            this.processArgs(args);
 
-        // Loop all exports
-        const labelsfile = new LabelsFile(this.labelsFileName);
-        const exports = labelsfile.getExports();
+            // Get filename 
+            const listfile = new ListFile(this.listFileName);
 
-        // Get the line numbers for all (export) labels
-        listfile.addLineNumbers(exports);
+            // Loop all exports
+            const labelsfile = new LabelsFile(this.labelsFileName);
+            const exports = labelsfile.getExports();
 
-        // Get the text descriptions.
-        exports.setDescriptions(listfile.lines, this.maxEmptyLines);
+            // Get the line numbers for all (export) labels
+            listfile.addLineNumbers(exports);
 
-        // Write the output labels file with the comments
-        if(this.outLabelsFileName)
-            exports.writeLabelsWithComments(this.outLabelsFileName);
+            // Get the text descriptions.
+            exports.setDescriptions(listfile.lines, this.maxEmptyLines);
 
-        // Write the html output
-        if(this.outDir) {
-            const html = new Html(exports, this.title, this.tabSpacesCount);
-            html.writeFiles(this.outDir);
+            // Write the html output
+            if(this.outDir) {
+                const html = new Html(exports, this.title, this.tabSpacesCount);
+                html.writeFiles(this.outDir);
+            }
+
+            // Write the output labels file with the comments
+            if(this.outLabelsFileName) {
+                exports.writeLabelsWithComments(this.outLabelsFileName);
+            }
+
+        } catch(e) {
+            console.log('Error: ', e.message);
+            //throw e;
+            return 1;
         }
+
         return 0;
     }
 
@@ -159,9 +168,15 @@ class Startup {
             }
         }
 
-        // Print help if no filename or output directory given
-        if(!this.listFileName || !(this.outDir || this.outLabelsFileName)) {
-            this.printHelp();
+        // Print help if both filenames are given
+        if(!this.listFileName || !this.labelsFileName) {
+            console.log("Both input files, list and labels, are required!\n");
+            process.exit(1);
+        }
+        
+        // Neither an output labels file nor an output directory is ggiven
+        if((!this.outDir) && (!this.outLabelsFileName)) {
+            console.log("An output is reuqired. Either a labels filename or an html directory!\n");
             process.exit(1);
         }
     }
