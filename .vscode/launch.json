@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/out/src/asm-api-doc-tool.js",
             "args": [
                 "--list", "examples/zxngfw.list",
-                "--labels", "examples/zxngfw.inc",
+                "--labels", "examples/zxngfw.labels",
                 "--out", "out/html",
                 "--outlabels", "out/zxngfwout.labels"
             ]

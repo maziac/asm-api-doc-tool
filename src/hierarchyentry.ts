@@ -138,9 +138,8 @@ export class HierarchyEntry {
             }
             // Change the printed label if it is a EQU
             if(this.labelType == LabelType.CONST) {
-                let hexString = this.labelValue.toString(16).toUpperCase();
-                hexString = "0".repeat(4-hexString.length) + hexString; 
-                this.printLabel += ' = 0x' + hexString + ' (' + this.labelValue + ')';
+                const hexString = HierarchyEntry.getHexString(this.labelValue, 4);
+                this.printLabel += ' = 0x' + hexString + ' (' + HierarchyEntry.getDecimal(this.labelValue) + ')';
             }
         }
 
@@ -350,10 +349,8 @@ export class HierarchyEntry {
                 if(this.description) {
                     text += ';' + this.description.replace(/\n/g,'\n;') + '\n';
                 }
-                const hexString = this.labelValue.toString(16).toUpperCase();
-                const len = hexString.length;
-                let pad = (len < 4) ? '0'.repeat(4-len) : '';
-                text += this.label + ': EQU 0x' + pad + hexString + '\n\n';
+                const hexString = HierarchyEntry.getHexString(this.labelValue, 4);
+                text += this.label + ': EQU 0x' + hexString + '\n\n';
             }
         }
         // Recursively dive into the sub labels
@@ -364,4 +361,36 @@ export class HierarchyEntry {
         return text;
     }
 
+
+	/**
+	 * Returns a hex string from a number with leading zeroes.
+	 * @param value The number to convert.
+	 * @param size The number of digits for the resulting string.
+	 * @returns E.g. "AF" or "0BC8". If 'vlaue' is undefined it returns a number of '?'.
+	 */
+	protected static getHexString(value: number|undefined, size: number): string {
+		if(value != undefined) {
+			var s = value.toString(16).toUpperCase();
+			const r = size - s.length;
+			if(r > 0)
+				s = '0'.repeat(r) + s;  // Add leading digits
+			return s;
+		}
+		// Undefined
+		return "?".repeat(size);
+    }
+    
+
+    /**
+     * Returns a negative number if value starts with 0x800000
+     * bit set. sjasmplus uses 3 byte values. So, if the highest
+     * bit is set it is probably a negative value.
+     * @param value a value in the range [0;0xFFFFFF]
+     * @returns a positive or negative value
+     */
+    protected static getDecimal(value: number): number {
+        if(value >= 0x800000)
+            return value - 0x1000000;
+        return value;
+    }
 }

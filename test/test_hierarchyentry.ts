@@ -625,4 +625,50 @@ suite('HierarchyEntry', () => {
 
     });
 
+    suite('getHexString', () => {
+  
+        test('undefined', (done) => {
+            const r = (HierarchyEntry as any).getHexString(undefined, 3);
+            assert.equal(r, '???');
+            done();
+        });
+  
+        test('small value', (done) => {
+            const r = (HierarchyEntry as any).getHexString(0xF1, 2);
+            assert.equal(r, 'F1');
+            done();
+        });
+  
+        test('big value', (done) => {
+            const r = (HierarchyEntry as any).getHexString(0x01F4, 4);
+            assert.equal(r, '01F4');
+            done();
+        });
+  
+        test('bigger value', (done) => {
+            const r = (HierarchyEntry as any).getHexString(0x12222, 4);
+            assert.equal(r, '12222');
+            done();
+        });
+
+    });
+
+
+    suite('getDecimal', () => {
+  
+        test('Positive number', (done) => {
+            const r = (HierarchyEntry as any).getDecimal(5);
+            assert.equal(r, 5);
+            done();
+        });
+
+        test('Negative numbers', (done) => {
+            let r = (HierarchyEntry as any).getDecimal(0x800000);
+            assert.equal(r, -0x800000);
+            r = (HierarchyEntry as any).getDecimal(0xFFFFFF);
+            assert.equal(r, -1);
+            done();
+        });
+    });
+
 });

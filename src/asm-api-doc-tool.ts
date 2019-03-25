@@ -74,7 +74,7 @@ class Startup {
 
         } catch(e) {
             console.log('Error: ', e.message);
-            //throw e;
+            throw e;
             return 1;
         }
 
