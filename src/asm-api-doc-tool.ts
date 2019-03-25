@@ -29,6 +29,9 @@ class Startup {
     /// The output directory.
     protected static outDir: string;
 
+    /// Output labels file name (the labels + comments)
+    protected static outLabelsFileName: string;
+
     /// The number of spaces for a tab.
     protected static tabSpacesCount = 3;
 
@@ -57,9 +60,15 @@ class Startup {
         // Get the text descriptions.
         exports.setDescriptions(listfile.lines, this.maxEmptyLines);
 
+        // Write the output labels file with the comments
+        if(this.outLabelsFileName)
+            exports.writeLabelsWithComments(this.outLabelsFileName);
+
         // Write the html output
-        const html = new Html(exports, this.title, this.tabSpacesCount);
-        html.writeFiles(this.outDir);
+        if(this.outDir) {
+            const html = new Html(exports, this.title, this.tabSpacesCount);
+            html.writeFiles(this.outDir);
+        }
         return 0;
     }
 
@@ -122,6 +131,14 @@ class Startup {
                     }
                     break;
 
+                // Output labels file name (the labels + comments)
+                case '--outlabels':
+                    this.outLabelsFileName = args.shift() as string;
+                    if(!this.outLabelsFileName) {
+                        throw arg + ': Expected an output labels file name.';
+                    }
+                    break;
+
                 // Tabs
                 case '--tab':
                 this.tabSpacesCount = parseInt(args.shift() as string);
@@ -143,7 +160,7 @@ class Startup {
         }
 
         // Print help if no filename or output directory given
-        if(!this.listFileName || !this.outDir) {
+        if(!this.listFileName || !(this.outDir || this.outLabelsFileName)) {
             this.printHelp();
             process.exit(1);
         }
@@ -163,7 +180,7 @@ Example usage:
 $ sjasmplus-api-doc-tool -title "My Great Library API" --list my_great_lib.list --labels my_great_lib.labels
 
 General usage:
-sjasmplus-api-doc-tool [options] --list <list-file-name> --labels <labels-file-name> --out <dir>
+sjasmplus-api-doc-tool [options] --list <list-file-name> --labels <labels-file-name> --out <dir> [-outlabels <output-labels-file-name>]
 Options:
     -h|-help|--help: Prints this help.
     -v|-version|--version: Prints the version number.
@@ -174,6 +191,12 @@ Options:
         Typically generated with the sjasmplus argument "--exp="
     --out <dir>: The output directory. The html files are written
         here. If it does not exist it is created.
+    --outlabels <output-labels-file-name>: The output filename for a labels file that contains
+        the same labels as in <labels-file-name> but including the found comments.
+        This is useful if the labels file should serve as input in other assembler projects.
+        The comments above the labels make it possible to show the documentation when hovering
+        in an IDE like vscode.
+        Is optional.
     --tab <count-spaces>: The number of spaces to use for a tab.
         Default is ${this.tabSpacesCount}.
     --max-empty-lines: The maximum allowed number of empty    

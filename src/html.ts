@@ -3,6 +3,7 @@ import * as util from 'util';
 import * as path from 'path';
 const fs = require('fs-extra');
 
+
 /// The main html file.
 const htmlMain = 'index.html';
 

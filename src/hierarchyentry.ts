@@ -1,5 +1,7 @@
 import { ListFile } from './listfile';
 import assert = require('assert');
+import { dirname } from 'path';
+const fs = require('fs-extra');
 
 
 /**
@@ -35,8 +37,11 @@ export class HierarchyEntry {
     /// The descriptions of the sub routines.
     public description: string|undefined;
 
-    /// The type of the label (code, data or const).
+    /// The type of the label (MODULE, CODE, DATA or CONST/EQU).
     public labelType: LabelType;
+
+    /// The label name.
+    public label: string;
 
     /// The line that should be printed. Normally the label itself, but 
     /// e.g. for const it also includes the constant data.
@@ -56,6 +61,7 @@ export class HierarchyEntry {
         this.elements = new Map<string,HierarchyEntry>();
         this.description = undefined;
         this.printLabel = label as any;
+        this.label = label as any;
         this.labelValue = -1;    // Not used
         this.labelType = LabelType.UNKNOWN;
     }
@@ -138,7 +144,7 @@ export class HierarchyEntry {
             }
         }
 
-        // Iteratively dive into the sub labels
+        // Recursively dive into the sub labels
         for(const [, entry] of this.elements) {
             entry.setDescriptions(lines, maxEmptyLines);
         }
@@ -308,4 +314,54 @@ export class HierarchyEntry {
         // Everything else is code
         return LabelType.CODE;
     }
+
+
+    /**
+     * Writes the labels into a file.
+     * Above the labels the description/comment is placed.
+     * This is useful for IDEs like vscode as they can extract this info to
+     * display when hovering above a label.
+     * @param filepath The filename to write.
+     */
+    public writeLabelsWithComments(filepath: string) {
+        // Create directory if necessary
+        const dir = dirname(filepath);     
+        fs.mkdirpSync(dir);
+        // write file
+        const text = this.writeLabelsWithCommentsRecursively();
+        fs.writeFileSync(filepath, text);
+    }
+
+
+    /** 
+     * Returns one hierarchy entry with comments and labels.
+     * And also the sub entries. 
+     * @return a string with labels and descriptions
+     */
+    protected writeLabelsWithCommentsRecursively(): string {
+        // Write labels and descriptions for all labels that originally
+        // were included in the labels file.
+        // These are all hierarchy entries that contain a value.
+        let text = '';
+        if(this.label) {
+            if(this.labelValue >= 0) {
+                // Label exists.
+                // Comment = description.
+                if(this.description) {
+                    text += ';' + this.description.replace(/\n/g,'\n;') + '\n';
+                }
+                const hexString = this.labelValue.toString(16).toUpperCase();
+                const len = hexString.length;
+                let pad = (len < 4) ? '0'.repeat(4-len) : '';
+                text += this.label + ': EQU 0x' + pad + hexString + '\n\n';
+            }
+        }
+        // Recursively dive into the sub labels
+        for(const [, entry] of this.elements) {
+            text += entry.writeLabelsWithCommentsRecursively();
+        }
+        // Return
+        return text;
+    }
+
 }
