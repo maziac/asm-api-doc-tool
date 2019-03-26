@@ -4,6 +4,7 @@
 
 - Fixed decoding big constants (> 0xFFFF).
 - Allows decoding negative decimals.
+- "--skip" parameter. Allow output generation for Savannah's z80asm.
 
 
 ## 1.1.0

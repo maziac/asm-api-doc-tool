@@ -38,6 +38,11 @@ class Startup {
     /// The max number of empty lines before a label.
     protected static maxEmptyLines = 0;
 
+    /// The numbers of characters to skip from the list file
+    /// on each line. In sjasmplus these are 24 character with address
+    /// and byte information.
+    protected static skipCharacters = 24;
+
     /**
      * Main function. Called on startup.
      */
@@ -49,7 +54,7 @@ class Startup {
             this.processArgs(args);
 
             // Get filename 
-            const listfile = new ListFile(this.listFileName);
+            const listfile = new ListFile(this.listFileName, this.skipCharacters);
 
             // Loop all exports
             const labelsfile = new LabelsFile(this.labelsFileName);
@@ -163,6 +168,14 @@ class Startup {
                     }
                     break;
 
+                // Number of allowed max. emptylines above a label.
+                case '--skip':
+                    this.skipCharacters = parseInt(args.shift() as string);
+                    if(isNaN(this.skipCharacters)) {
+                        throw arg + ': Expected number of characters to skip per line.';
+                    }
+                    break;
+
                 default:
                     throw "Unknown argument: '" + arg + "'";
             }
@@ -214,11 +227,15 @@ Options:
         Is optional.
     --tab <count-spaces>: The number of spaces to use for a tab.
         Default is ${this.tabSpacesCount}.
-    --max-empty-lines: The maximum allowed number of empty    
+        --max-empty-lines: The maximum allowed number of empty    
         lines before a comment. If there are more empty lines
         between comment and label the comment is not 
         associated with the label.
         Default is ${this.maxEmptyLines}.
+    --skip: The number of characters to skip per input line of the
+        list file. These characters contain information about the assembled 
+        addresses and bytes. Afterwards the asm source text follows.
+        Default is ${this.skipCharacters} which fits for sjasmplus.
 `);
     }
 

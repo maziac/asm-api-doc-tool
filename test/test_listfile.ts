@@ -24,7 +24,7 @@ suite('ListFile', () => {
     suite('addLineNumbers', () => {
 
         test('All exports found', (done) => {
-            const lf = new ListFile('test/data/lf_addlinenumbers.list')
+            const lf = new ListFile('test/data/lf_addlinenumbers.list', 24)
             assert.notEqual(lf.lines.length, 0, "File contains no lines.");
             const lb = new LabelsFile('test/data/lf_addlinenumbers.labels')
             assert.notEqual(lb.lines.length, 0, "File contains no lines.");

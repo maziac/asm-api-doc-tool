@@ -9,7 +9,7 @@ suite('LabelsFile', () => {
     suite('constructor', () => {
 
         test('File reading', (done) => {
-            const lf = new LabelsFile('test/data/lf_exports.labels')
+            const lf = new LabelsFile('test/data/lf_exports.labels');
             assert.equal(lf.lines.length, 7, "Expected number of lines wrong.");
             assert.equal(lf.lines[0], "a.a1: EQU 0x000000EB", "Expected line wrong.");
             done();
@@ -21,7 +21,7 @@ suite('LabelsFile', () => {
     suite('getExports', () => {
  
         test('Hierarchy', (done) => {
-            const lf = new LabelsFile('test/data/lf_exports.labels')
+            const lf = new LabelsFile('test/data/lf_exports.labels');
             assert.notEqual(lf.lines.length, 0, "File contains no lines.");
 
             const r = lf.getExports();
@@ -63,4 +63,24 @@ suite('LabelsFile', () => {
         });
     });
 
+    suite('parseValue', () => {
+ 
+        test('Several values', (done) => {
+            const lf = new LabelsFile('test/data/lf_exports.labels') as any; // Doesn't matter which file
+
+            let r = lf.parseValue("15");
+            assert.equal(r, 15);
+
+            r = lf.parseValue("-15");
+            assert.equal(r, -15);
+
+            r = lf.parseValue("0xFF");
+            assert.equal(r, 0xFF);
+
+            r = lf.parseValue("$AA");
+            assert.equal(r, 0xAA);
+
+            done();
+        });
+    });
 });

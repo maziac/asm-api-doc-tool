@@ -38,7 +38,9 @@ export class LabelsFile {
         for(const line of this.lines) {
             // Parsing: A list file line looks like this: 
             // "math.udiv_hl_e: EQU 0x00000059"
-            const match = /^(\w[\w\.]*):?\s*equ\s+(.*)/i.exec(line);
+            // or
+            // "label: equ $4000"
+            const match = /^([a-z_][\w\.]*):?\s*equ\s+(.*)/i.exec(line);
             if(match) {
                 // Get label
                 const label = match[1];
@@ -59,7 +61,7 @@ export class LabelsFile {
                     map = nextMap;
                 }
                 // Add value to last map
-                const value = parseInt(match[2]);
+                const value = this.parseValue(match[2]);
                 map.labelValue = value;
             }
         }
@@ -68,5 +70,17 @@ export class LabelsFile {
         return hierarchyMap;
     }
 
+
+    /**
+     * Converts a string into a number. If string starts with "0x" or "$"
+     * it is interpreted as hexadecimal, otherwise decimal.
+     * @param valueString The string to convert.
+     * @return The value of the string.
+     */
+    protected parseValue(valueString: string) {
+        if(valueString.startsWith('$'))
+            return parseInt('0x' + valueString.substr(1)); // Skip first character
+        return parseInt(valueString);
+    }
 }
 

@@ -239,7 +239,7 @@ export class HierarchyEntry {
         // Check first line
         const firstLine = ListFile.getMainLine(lines[lineNumber])
         resultLines.push(firstLine);
-        const matchFirstLine = /^\w[\w\.]*:?\s+[^;\s]+/.exec(firstLine);
+        const matchFirstLine = /^[a-z_][\w\.]*:?\s+[^;\s]+/i.exec(firstLine);
         if(matchFirstLine)
             return resultLines;
         // Loop other lines
@@ -296,7 +296,7 @@ export class HierarchyEntry {
     protected getLabelType(line: string): LabelType {
         if(!line)
             return LabelType.UNKNOWN;
-        const match = /^((\w[\w\.]*):?)?\s*([^;\s]*)/.exec(line) as Array<string>;  // Will always find something
+        const match = /^(([a-z_][\w\.]*):?)?\s*([^;\s]*)/i.exec(line) as Array<string>;  // Will always find something
         assert(match);
         //if(!match) 
         //    return LabelType.UNKNOWN;

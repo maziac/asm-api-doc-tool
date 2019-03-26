@@ -11,12 +11,22 @@ export class ListFile {
     /// All the lines of text read from the file.
     public lines: Array<string>;
 
+    /// The numbers of characters to skip from the list file
+    /// on each line. In sjasmplus these are 24 character with address
+    /// and byte information.
+    protected static skipCharacters: number = 24;
+
+
     /**
      * Reads the list file.
-     * @param filename 
+     * @param filename The filename of the list file.
+     * @param skip The number of characters to skip from each input line.
+     * For sjasmplus 24 should be chosen, which is also the default.
      */
-    constructor(filename: string) {
+    constructor(filename: string, skip?: number) {
         this.lines = readFileSync(filename).toString().split('\n');	
+        if(skip)
+            ListFile.skipCharacters = skip;
     }
 
 
@@ -25,7 +35,7 @@ export class ListFile {
      * @param line The original line.
      */
     public static getMainLine(line: string): string {
-        const mainLine = line.substr(24);
+        const mainLine = line.substr(ListFile.skipCharacters);
         return mainLine;
     }
 
@@ -121,7 +131,7 @@ export class ListFile {
             // Parsing: We are looking for labels. Local labels are omitted.
             // A list file line with a label looks like this: 
             // "  76+ 0A8E              ula.print_char: "
-            const labelMatch = /^(\w[\w\.]*):?\s*(.*)/i.exec(remaningLine);
+            const labelMatch = /^([a-z_][\w\.]*):?\s*(.*)/i.exec(remaningLine);
             if(labelMatch) {
                 // Remove all spaces from the label.
                 const relLabel = labelMatch[1];  // e.g. "ula.print.char"
