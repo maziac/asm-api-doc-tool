@@ -107,10 +107,9 @@ Notes:
 # Other Assemblers
 
 asm-api-doc-tool was made with sjsasmplus as assembler in mind. However other assemblers may work as well.
-For Savannah's z80asm you have to use "--skip 15". z80asm need to be isntructed to output the label and list file whch can be used as input to asm-api-doc-tool.
+For Savannah's z80asm you have to use "--skip 15". z80asm need to be instructed to output the label and list file which can be used as input to asm-api-doc-tool.
 However, this will output documentation of all labels. It is a somewhat unique feature of sjasmplus to select the labels with the EXPORT directive.
-
-
+l
 # Example Output
 
 ![](assets/screenshot1.jpg "Example output")
