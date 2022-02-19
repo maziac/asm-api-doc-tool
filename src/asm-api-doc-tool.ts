@@ -2,7 +2,7 @@ import { ListFile } from './listfile';
 import { LabelsFile } from './labelsfile';
 import { Html } from './html';
 const pckg = require('../../package.json');
-                     
+
 
 
 
@@ -53,7 +53,7 @@ class Startup {
             const args = process.argv.splice(2);
             this.processArgs(args);
 
-            // Get filename 
+            // Get filename
             const listfile = new ListFile(this.listFileName, this.skipCharacters);
 
             // Loop all exports
@@ -80,7 +80,6 @@ class Startup {
         } catch(e) {
             console.log('Error: ', e.message);
             throw e;
-            return 1;
         }
 
         return 0;
@@ -117,7 +116,7 @@ class Startup {
                 case '--title':
                     this.title = args.shift() as string;
                     if(!this.title) {
-                        throw arg + ': Expected a title.';
+                        throw arg + ': Expected a title.';  // NOSONAR
                     }
                     break;
 
@@ -125,7 +124,7 @@ class Startup {
                 case '--list':
                     this.listFileName = args.shift() as string;
                     if(!this.listFileName) {
-                        throw arg + ': Expected a list file name.';
+                        throw arg + ': Expected a list file name.';  // NOSONAR
                     }
                     break;
 
@@ -133,7 +132,7 @@ class Startup {
                 case '--labels':
                     this.labelsFileName = args.shift() as string;
                     if(!this.labelsFileName) {
-                        throw arg + ': Expected a labels file name.';
+                        throw arg + ': Expected a labels file name.';  // NOSONAR
                     }
                     break;
 
@@ -141,7 +140,7 @@ class Startup {
                 case '--out':
                     this.outDir = args.shift() as string;
                     if(!this.outDir) {
-                        throw arg + ': Expected an output directory name.';
+                        throw arg + ': Expected an output directory name.';  // NOSONAR
                     }
                     break;
 
@@ -149,7 +148,7 @@ class Startup {
                 case '--outlabels':
                     this.outLabelsFileName = args.shift() as string;
                     if(!this.outLabelsFileName) {
-                        throw arg + ': Expected an output labels file name.';
+                        throw arg + ': Expected an output labels file name.';  // NOSONAR
                     }
                     break;
 
@@ -157,14 +156,14 @@ class Startup {
                 case '--tab':
                 this.tabSpacesCount = parseInt(args.shift() as string);
                     if(isNaN(this.tabSpacesCount)) {
-                        throw arg + ': Expected number of spaces for a tab.';
+                        throw arg + ': Expected number of spaces for a tab.';  // NOSONAR
                     }   break;
 
                 // Number of allowed max. emptylines above a label.
                 case '--max-empty-lines':
                     this.maxEmptyLines = parseInt(args.shift() as string);
                     if(isNaN(this.maxEmptyLines)) {
-                        throw arg + ': Expected maximum number of empty lines above a comment.';
+                        throw arg + ': Expected maximum number of empty lines above a comment.';  // NOSONAR
                     }
                     break;
 
@@ -172,12 +171,12 @@ class Startup {
                 case '--skip':
                     this.skipCharacters = parseInt(args.shift() as string);
                     if(isNaN(this.skipCharacters)) {
-                        throw arg + ': Expected number of characters to skip per line.';
+                        throw arg + ': Expected number of characters to skip per line.';  // NOSONAR
                     }
                     break;
 
                 default:
-                    throw "Unknown argument: '" + arg + "'";
+                    throw "Unknown argument: '" + arg + "'";  // NOSONAR
             }
         }
 
@@ -186,7 +185,7 @@ class Startup {
             console.log("Both input files, list and labels, are required!\n");
             process.exit(1);
         }
-        
+
         // Neither an output labels file nor an output directory is ggiven
         if((!this.outDir) && (!this.outLabelsFileName)) {
             console.log("An output is reuqired. Either a labels filename or an html directory!\n");
@@ -227,13 +226,13 @@ Options:
         Is optional.
     --tab <count-spaces>: The number of spaces to use for a tab.
         Default is ${this.tabSpacesCount}.
-        --max-empty-lines: The maximum allowed number of empty    
+        --max-empty-lines: The maximum allowed number of empty
         lines before a comment. If there are more empty lines
-        between comment and label the comment is not 
+        between comment and label the comment is not
         associated with the label.
         Default is ${this.maxEmptyLines}.
     --skip: The number of characters to skip per input line of the
-        list file. These characters contain information about the assembled 
+        list file. These characters contain information about the assembled
         addresses and bytes. Afterwards the asm source text follows.
         Default is ${this.skipCharacters} which fits for sjasmplus.
 `);
