@@ -15,8 +15,8 @@
                 //"--list", "examples/starwarrior.list",
                 //"--labels", "examples/starwarrior.labels",
                 //"--skip", "15", // Savannah's z80asm
-                "--list", "../../asm/zxnext_game_framework/out/zxngfw.list",
-                "--labels", "../../asm/zxnext_game_framework/src/zxngfw.inc",
+                "--list", "../../Z80/asm/zxnext_game_framework/out/zxngfw.list",
+                "--labels", "../../Z80/asm/zxnext_game_framework/src/zxngfw.inc",
                 "--out", "out/html",
                 "--outlabels", "out/zxngfwout.labels",
                 //"--skip", "3"
