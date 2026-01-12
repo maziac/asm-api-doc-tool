@@ -4,3 +4,4 @@ node_modules/
 coverage/
 asm-api-doc-tool-*
 *.zip
+examples/
